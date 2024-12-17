@@ -59,32 +59,32 @@ address
 It is necessary to implement popular types of HTTP requests (GET, POST, PUT, DELETE, PATCH).
 
 - Clients:
-    1) Adding a client (json is supplied to the input, corresponding to the structure described above).
-    2) Deleting a client (by its ID)
-    3) Receiving clients by first and last name (parameters — first and last name)
-    4) Receiving all clients (In this request it is necessary to provide optional pagination parameters in the query string: limit and offset). If these parameters are missing, return the entire list.
-    5) Changing the client's address (parameters: Id and new address in the form of json in accordance with the format described above)
+    1. Adding a client (json is supplied to the input, corresponding to the structure described above).
+    2. Deleting a client (by its ID)
+    3. Receiving clients by first and last name (parameters — first and last name)
+    4. Receiving all clients (In this request it is necessary to provide optional pagination parameters in the query string: limit and offset). If these parameters are missing, return the entire list.
+    5. Changing the client's address (parameters: Id and new address in the form of json in accordance with the format described above)
 
 - Products:
-    1) Adding a product (json is supplied to the input, corresponding to the structure described above).
-    2) Reducing the quantity of goods (the request is provided with the product ID and how much to reduce)
-    3) Receiving the product by id
-    4) Receiving all available items
-    5) Deleting an item by id
+    1. Adding a product (json is supplied to the input, corresponding to the structure described above).
+    2. Reducing the quantity of goods (the request is provided with the product ID and how much to reduce)
+    3. Receiving the product by id
+    4. Receiving all available items
+    5. Deleting an item by id
 
 - Suppliers:
-    1) Adding a supplier (json is supplied as input, corresponding to the structure described above).
-    2) Changing the supplier's address (parameters: Id and new address in json format according to the format described above)
-    3) Deleting a supplier by id
-    4) Getting all suppliers
-    5) Getting a supplier by id
+    1. Adding a supplier (json is supplied as input, corresponding to the structure described above).
+    2. Changing the supplier's address (parameters: Id and new address in json format according to the format described above)
+    3. Deleting a supplier by id
+    4. Getting all suppliers
+    5. Getting a supplier by id
 
 - Images:
-    1) adding an image (the bytearray of the image and the product id are supplied as input).
-    2) Changing the image (the input is supplied with the image id and a new line for replacement)
-    3) Deleting an image by image id
-    4) Getting an image of a specific product (by product ID) 
-    5) Getting an image by image id
+    1. adding an image (the bytearray of the image and the product id are supplied as input).
+    2. Changing the image (the input is supplied with the image id and a new line for replacement)
+    3. Deleting an image by image id
+    4. Getting an image of a specific product (by product ID) 
+    5. Getting an image by image id
 
 Methods that return an image must return an image (an array of bytes) with the header "application/octet-stream". In this case, the file should be downloaded automatically.
 
