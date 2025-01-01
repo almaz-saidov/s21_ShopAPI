@@ -5,11 +5,11 @@ from config import settings
 
 engine = create_engine(settings.DB_URL)
 
-SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
+SessionFactory = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 
 def get_db_session():
-    db = SessionLocal()
+    db = SessionFactory()
     try:
         yield db
     finally:
