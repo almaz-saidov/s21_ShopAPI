@@ -1,9 +1,9 @@
 from flask import jsonify, request
 
-from ...models import Client
+from application.models import Client
 from . import bp
 
 
-@bp.get()
+@bp.get('/client_get')
 def client_get():
     return jsonify({'client': 'works'})

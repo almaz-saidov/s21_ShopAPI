@@ -1,9 +1,9 @@
 from flask import jsonify, request
 
-from ...models import Supplier
+from application.models import Supplier
 from . import bp
 
 
-@bp.get()
+@bp.get('/supplier_get')
 def supplier_get():
     return jsonify({'supplier': 'works'})

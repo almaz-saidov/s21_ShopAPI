@@ -1,9 +1,9 @@
 from flask import jsonify, request
 
-from ...models import Address
+from application.models import Address
 from . import bp
 
 
-@bp.get()
+@bp.get('/address_get')
 def address_get():
     return jsonify({'address': 'works'})

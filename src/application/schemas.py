@@ -1,5 +1,6 @@
 from datetime import date
 from typing import Optional
+
 from sqlalchemy.dialects.postgresql import UUID
 
 from pydantic import BaseModel
