@@ -19,9 +19,9 @@ class ClientDTO:
         self.id = client.id
         self.client_name = client.client_name
         self.client_surname = client.client_surname
-        self.birthday = client.birthday
+        self.birthday = client.birthday.isoformat()
         self.gender = client.gender
-        self.registration_date = client.registration_date
+        self.registration_date = client.registration_date.isoformat()
 
     def map_client_dto_to_json(self):
         return json.dumps(self.__dict__, indent=4)
