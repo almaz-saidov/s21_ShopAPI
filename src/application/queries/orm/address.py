@@ -13,8 +13,9 @@ class AddressORM:
     def get_address(address_id: int):
         with get_db_session() as db_session:
             address = db_session.query(Address).filter(Address.id == address_id).one_or_none()
+            print(address)
             if not address:
-                raise Exception(f'Address with id {address_id} not found')
+                raise Exception(f'Address with id {address_id} not found')                
             return address
 
     @staticmethod

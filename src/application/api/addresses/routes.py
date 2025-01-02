@@ -36,10 +36,9 @@ def get_address():
     try:
         address_id = int(request.json['address_id'])
         address = AddressORM.get_address(address_id)
+        return jsonify({'message': 'Success', 'address': AddressDTO(address).map_address_dto_to_json()}), 200
     except Exception as e:
-        jsonify({'message': f'{e}'}), 400
-    
-    return jsonify({'message': 'Success', 'address': AddressDTO(address).map_address_dto_to_json()}), 200
+        return jsonify({'message': f'{e}'}), 400
 
 
 @bp.delete('/delete_address')
