@@ -1,12 +1,15 @@
+import json
+
 from application.database import get_db_session
 from application.models import Client
 
 
 class ClientORM:
-    # подается json, описывающий client по его модели
     @staticmethod
-    def add_client(client):
-        pass
+    def add_client(client: Client):
+        with get_db_session() as db_session:
+            db_session.add(client)
+            db_session.commit()
 
     @staticmethod
     def delete_client(client_id: int):
@@ -21,10 +24,9 @@ class ClientORM:
 
     # Получение всех клиентов (В данном запросе необходимо предусмотреть опциональные параметры пагинации в строке запроса: limit и offset). В случае отсутствия эти параметров возвращать весь список.
     @staticmethod
-    def get_all_clients():
+    def get_all_clients(limit: int, offset: int):
         pass
 
-    # Получение клиентов по имени и фамилии (параметры — имя и фамилия)
     @staticmethod
     def get_client_by_name_and_surname(name: str, surname: str):
         with get_db_session() as db_session:
@@ -35,5 +37,5 @@ class ClientORM:
 
     # Изменение адреса клиента (параметры: Id и новый адрес в виде json в соответствии с выше описанным форматом)
     @staticmethod
-    def change_client_address(id: int, new_address):
+    def change_client_address(address_id: int, new_address: json.dumps):
         pass
