@@ -10,7 +10,7 @@ class AddressDTO:
         self.city = address.city
         self.street = address.street
 
-    def map_address_to_dto(self):
+    def map_address_dto_to_json(self):
         return json.dumps(self.__dict__, indent=4)
 
 
@@ -23,7 +23,7 @@ class ClientDTO:
         self.gender = client.gender
         self.registration_date = client.registration_date
 
-    def map_client_to_dto(self):
+    def map_client_dto_to_json(self):
         return json.dumps(self.__dict__, indent=4)
 
 
@@ -33,7 +33,7 @@ class ImageDTO:
         self.id = image.id
         self._image = image._image
 
-    def map_image_to_dto(self):
+    def map_image_dto_to_json(self):
         return json.dumps(self.__dict__, indent=4)
 
 
@@ -46,7 +46,7 @@ class ProductDTO:
         self.available_stock = product.available_stock
         self.last_update_date = product.last_update_date
 
-    def map_product_to_dto(self):
+    def map_product_dto_to_json(self):
         return json.dumps(self.__dict__, indent=4)
 
 
@@ -56,5 +56,5 @@ class SupplierDTO:
         self.name = supplier.name
         self.phone_number = supplier.phone_number
 
-    def map_supplier_to_dto(self):
+    def map_supplier_dto_to_json(self):
         return json.dumps(self.__dict__, indent=4)

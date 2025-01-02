@@ -39,7 +39,7 @@ def get_address():
     except Exception as e:
         jsonify({'message': f'{e}'}), 400
     
-    return jsonify({'message': 'Success', 'address': AddressDTO(address).map_address_to_dto()}), 200
+    return jsonify({'message': 'Success', 'address': AddressDTO(address).map_address_dto_to_json()}), 200
 
 
 @bp.delete('/delete_address')
