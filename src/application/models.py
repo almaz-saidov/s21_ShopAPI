@@ -19,8 +19,8 @@ class Address(Base):
     city = Column(String(255), nullable=False)
     street = Column(String(255), nullable=False)
 
-    clients = relationship('Address', back_populates='address')
-    suppliers = relationship('Supplier', back_populates='address')
+    # clients = relationship('Client', back_populates='address')
+    # suppliers = relationship('Supplier', back_populates='address')
 
 
 class Client(Base):
@@ -34,7 +34,7 @@ class Client(Base):
     registration_date = Column(Date, default=date.today)
     address_id = Column(BigInteger, ForeignKey('address.id'), nullable=False)
 
-    address = relationship("Address", back_populates="clients")
+    # address = relationship("Address", back_populates="clients")
 
 
 class Image(Base):
@@ -56,8 +56,8 @@ class Product(Base):
     supplier_id = Column(BigInteger, ForeignKey('supplier.id'), nullable=False)
     image_id = Column(UUID(as_uuid=True), ForeignKey('image.id'), nullable=False)
 
-    supplier = relationship('Supplier', uselist=False, back_populates='supplier')
-    image = relationship('Image', backref='product')
+    # supplier = relationship('Supplier', uselist=False, back_populates='supplier')
+    # image = relationship('Image', backref='product')
 
 
 class Supplier(Base):
@@ -68,4 +68,4 @@ class Supplier(Base):
     address_id = Column(BigInteger, ForeignKey('address.id'), nullable=False)
     phone_number = Column(String(15), nullable=False)
 
-    address = relationship('Address', back_populates='suppliers')
+    # address = relationship('Address', back_populates='suppliers')
