@@ -1,3 +1,4 @@
+from application.database import get_db_session
 from sqlalchemy.dialects.postgresql import UUID
 
 from application.models import Image, Product
@@ -9,10 +10,15 @@ class ImageORM:
     def add_image(byte_array: bytes, product_id: int):
         pass
 
-    # Удаление изображения по id изображения
     @staticmethod
-    def delete_image(id: UUID):
-        pass    
+    def delete_image(image_id: UUID):
+        with get_db_session() as db_session:
+            image_to_delete = db_session.query(Image).filter(Image.id == image_id).one_or_none()
+            if image_to_delete:
+                db_session.delete(image_to_delete)
+                db_session.commit()
+            else:
+                raise Exception(f'Image with id {image_id} not found')    
 
     # Получение изображения по id изображения
     @staticmethod
