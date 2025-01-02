@@ -7,20 +7,6 @@ from application.queries.orm.address import AddressORM
 from . import bp
 
 
-@bp.delete('/delete_address')
-def delete_address():
-    if not request.is_json:
-        return jsonify({'message': 'Request body must be JSON'}), 400
-    
-    try:
-        address_id = int(request.json['address_id'])
-        AddressORM.delete_address(address_id)
-    except Exception as e:
-        return jsonify({'message': f'{e}'})        
-
-    return jsonify({'message': 'Success'}), 200
-
-
 @bp.post('/add_address')
 def add_address():
     if not request.is_json:
@@ -40,3 +26,34 @@ def add_address():
         AddressORM.add_address(new_address)
 
     return jsonify({'message': 'Success'}), 200
+
+
+@bp.get('/get_address')
+def get_address():
+    if not request.is_json:
+        return jsonify({'message': 'Request body must be JSON'}), 400
+    
+    try:
+        address_id = int(request.json['address_id'])
+        address = AddressORM.get_address(address_id)
+    except Exception as e:
+        jsonify({'message': f'{e}'}), 400
+    
+    return jsonify({'message': 'Success', 'address': AddressDTO(address).map_address_to_dto()}), 200
+
+
+@bp.delete('/delete_address')
+def delete_address():
+    if not request.is_json:
+        return jsonify({'message': 'Request body must be JSON'}), 400
+    
+    try:
+        address_id = int(request.json['address_id'])
+        AddressORM.delete_address(address_id)
+    except Exception as e:
+        return jsonify({'message': f'{e}'}), 400      
+
+    return jsonify({'message': 'Success'}), 200
+
+
+

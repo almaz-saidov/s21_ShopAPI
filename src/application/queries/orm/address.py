@@ -10,6 +10,14 @@ class AddressORM:
             db_session.commit()
 
     @staticmethod
+    def get_address(address_id: int):
+        with get_db_session() as db_session:
+            address = db_session.query(Address).filter(Address.id == address_id).one_or_none()
+            if not address:
+                raise Exception(f'Address with id {address_id} not found')
+            return address
+
+    @staticmethod
     def delete_address(address_id: int):
         with get_db_session() as db_session:
             address_to_delete = db_session.query(Address).filter(Address.id == address_id).one_or_none()
