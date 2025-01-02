@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 
 class AddressSchema(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = None
     country: str
     city: str
     street: str
@@ -35,6 +35,7 @@ class ImageSchema(BaseModel):
 
     class Config:
         orm_mode = True
+        arbitrary_types_allowed = True
 
 
 class ProductSchema(BaseModel):
@@ -49,6 +50,7 @@ class ProductSchema(BaseModel):
 
     class Config:
         orm_mode = True
+        arbitrary_types_allowed = True
 
 
 class SupplierSchema(BaseModel):
