@@ -17,20 +17,20 @@ class AddressSchema(BaseModel):
 
 
 class ClientSchema(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = None
     client_name: str
     client_surname: str
-    birthday: date
+    birthday: date.isoformat
     gender: str
-    registration_date: date = date.today()
     address_id: int
 
     class Config:
         orm_mode = True
+        arbitrary_types_allowed = True
 
 
 class ImageSchema(BaseModel):
-    id: Optional[UUID]
+    id: Optional[UUID] = None
     _image: bytes
 
     class Config:
@@ -39,12 +39,11 @@ class ImageSchema(BaseModel):
 
 
 class ProductSchema(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = None
     name: str
     category: str
     price: int
     available_stock: int
-    last_update_date: date
     supplier_id: int
     image_id: UUID
 
@@ -54,7 +53,7 @@ class ProductSchema(BaseModel):
 
 
 class SupplierSchema(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = None
     name: str
     address_id: int
     phone_number: str
