@@ -5,10 +5,11 @@ from application.models import Product
 
 
 class ProductORM:
-    # Добавление товара (на вход подается json, соответствующей структуре, описанной сверху).
     @staticmethod
-    def add_product():
-        pass
+    def add_product(product: Product):
+        with get_db_session() as db_session:
+            db_session.add(product)
+            db_session.commit()
 
     @staticmethod
     def delete_product(prudct_id: int):
@@ -20,10 +21,10 @@ class ProductORM:
             else:
                 raise Exception(f'Product with id {prudct_id} not found')
 
-    # Получение всех доступных товаров
     @staticmethod
     def get_all_available_products():
-        pass
+        with get_db_session() as db_session:
+            return db_session.query(Product).filter(Product.available_stock > 0).all()
 
     @staticmethod
     def get_product(product_id: int):
