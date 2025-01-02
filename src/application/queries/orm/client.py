@@ -24,13 +24,13 @@ class ClientORM:
 
     # Получение всех клиентов (В данном запросе необходимо предусмотреть опциональные параметры пагинации в строке запроса: limit и offset). В случае отсутствия эти параметров возвращать весь список.
     @staticmethod
-    def get_all_clients(limit: int, offset: int):
+    def get_all_clients(limit: int=0, offset: int=0):
         pass
 
     @staticmethod
     def get_client_by_name_and_surname(name: str, surname: str):
         with get_db_session() as db_session:
-            client = db_session.query(Client).where(Client.client_name == name).where(Client.client_surname == surname).one_or_none()
+            client = db_session.query(Client).filter(Client.client_name == name, Client.client_surname == surname).one_or_none()
             if not client:
                 raise Exception(f'Client with name {name} and surname {surname} not found')
             return client
