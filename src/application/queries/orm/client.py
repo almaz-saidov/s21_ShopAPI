@@ -51,4 +51,3 @@ class ClientORM:
             query = update(Address).where(Address.id == client_to_change_address.address_id).values(country=new_address['country'], city=new_address['city'], street=new_address['street'])
             db_session.execute(query)
             db_session.commit()
-                

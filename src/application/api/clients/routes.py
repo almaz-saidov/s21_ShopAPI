@@ -60,7 +60,6 @@ def get_all_clients():
         return jsonify({'message': 'Success', 'clients': json_clients}), 200
 
 
-
 @bp.get('/get_client_by_name_and_surname')
 def get_client_by_name_and_surname():
     if not request.is_json:
