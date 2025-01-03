@@ -35,16 +35,16 @@ class ProductORM:
             return product
 
     @staticmethod
-    def reduce_product(product_id: int, n: int):
+    def reduce_product(product_id: int, reduce_by: int):
         with get_db_session() as db_session:
             product = db_session.query(Product).filter(Product.id == product_id).one_or_none()
             
             if not product:
                 raise Exception(f'Product with id {product_id} not found')
 
-            if product.available_stock < n:
+            if product.available_stock < reduce_by:
                 raise Exception(f'Available stock is {product.available_stock}')
             
-            query = update(Product).where(Product.id == product_id).values(available_stock=Product.available_stock - n)
+            query = update(Product).where(Product.id == product_id).values(available_stock=Product.available_stock - reduce_by)
             db_session.execute(query)
             db_session.commit()
