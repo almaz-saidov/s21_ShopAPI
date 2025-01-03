@@ -1,7 +1,9 @@
 import json
 
+from sqlalchemy import update
+
 from application.database import get_db_session
-from application.models import Client
+from application.models import Address, Client
 
 
 class ClientORM:
@@ -21,21 +23,32 @@ class ClientORM:
             else:
                 raise Exception(f'Client with id {client_id} not found')
 
-
-    # Получение всех клиентов (В данном запросе необходимо предусмотреть опциональные параметры пагинации в строке запроса: limit и offset). В случае отсутствия эти параметров возвращать весь список.
     @staticmethod
     def get_all_clients(limit: int=0, offset: int=0):
-        pass
+        with get_db_session() as db_session:
+            clients = db_session.query(Client).limit(limit).offset(offset).all()
+            return clients
 
     @staticmethod
     def get_client_by_name_and_surname(name: str, surname: str):
         with get_db_session() as db_session:
             client = db_session.query(Client).filter(Client.client_name == name, Client.client_surname == surname).one_or_none()
+            
             if not client:
                 raise Exception(f'Client with name {name} and surname {surname} not found')
+            
             return client
 
-    # Изменение адреса клиента (параметры: Id и новый адрес в виде json в соответствии с выше описанным форматом)
     @staticmethod
-    def change_client_address(address_id: int, new_address: json.dumps):
-        pass
+    def change_client_address(client_id: int, new_address: json.dumps):
+        with get_db_session() as db_session:
+            client_to_change_address = db_session.query(Client).filter(Client.id == client_id).one_or_none()
+            
+            if not client_to_change_address:
+                raise Exception(f'Client with id {client_id} not found')
+            
+            new_address = json.loads(new_address)
+            query = update(Address).where(Address.id == client_to_change_address.address_id).values(country=new_address['country'], city=new_address['city'], street=new_address['street'])
+            db_session.execute(query)
+            db_session.commit()
+                
