@@ -3,7 +3,7 @@ from typing import Optional
 
 from sqlalchemy.dialects.postgresql import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, SkipValidation
 
 
 class AddressSchema(BaseModel):
@@ -20,7 +20,7 @@ class ClientSchema(BaseModel):
     id: Optional[int] = None
     client_name: str
     client_surname: str
-    birthday: date.isoformat
+    birthday: date = Field(SkipValidation())
     gender: str
     address_id: int
 
