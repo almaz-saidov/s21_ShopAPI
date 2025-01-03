@@ -66,6 +66,6 @@ class Supplier(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     name = Column(String(255), nullable=False)
     address_id = Column(BigInteger, ForeignKey('address.id'), nullable=False)
-    phone_number = Column(String(15), nullable=False)
+    phone_number = Column(String(16), nullable=False)
 
     # address = relationship('Address', back_populates='suppliers')
