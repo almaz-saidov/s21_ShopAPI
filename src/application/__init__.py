@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 
 from config import settings
 
@@ -22,5 +21,3 @@ def create_app():
     app.register_blueprint(suppliers_bp)
 
     return app
-
-
