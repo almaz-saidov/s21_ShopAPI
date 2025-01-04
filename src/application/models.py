@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from sqlalchemy import (BigInteger, Column, Date,
                         ForeignKey, Integer, String)
-from sqlalchemy.orm import relationship
+# from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.sqltypes import LargeBinary
@@ -40,7 +40,7 @@ class Client(Base):
 class Image(Base):
     __tablename__ = 'image'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(), primary_key=True, default=uuid4)
     _image = Column(LargeBinary)
 
 
@@ -54,7 +54,7 @@ class Product(Base):
     available_stock = Column(Integer, nullable=False)
     last_update_date = Column(Date, default=date.today)
     supplier_id = Column(BigInteger, ForeignKey('supplier.id'), nullable=False)
-    image_id = Column(UUID(as_uuid=True), ForeignKey('image.id'), nullable=False)
+    image_id = Column(UUID(), ForeignKey('image.id'))
 
     # supplier = relationship('Supplier', uselist=False, back_populates='supplier')
     # image = relationship('Image', backref='product')

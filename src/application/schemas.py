@@ -1,9 +1,8 @@
 from datetime import date
 from typing import Optional
 
-from sqlalchemy.dialects.postgresql import UUID
-
 from pydantic import BaseModel, Field, SkipValidation
+from sqlalchemy.dialects.postgresql import UUID
 
 
 class AddressSchema(BaseModel):
@@ -45,7 +44,7 @@ class ProductSchema(BaseModel):
     price: int
     available_stock: int
     supplier_id: int
-    image_id: UUID
+    image_id: Optional[UUID] = None
 
     class Config:
         orm_mode = True
