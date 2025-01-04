@@ -12,8 +12,8 @@ SessionFactory = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 @contextmanager
 def get_db_session():
-    db = SessionFactory()
+    db_session = SessionFactory()
     try:
-        yield db
+        yield db_session
     finally:
-        db.close()
+        db_session.close()
