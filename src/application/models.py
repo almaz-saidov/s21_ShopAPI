@@ -40,8 +40,8 @@ class Client(Base):
 class Image(Base):
     __tablename__ = 'image'
 
-    id = Column(UUID(), primary_key=True, default=uuid4)
-    _image = Column(LargeBinary)
+    id = Column(UUID, primary_key=True, default=uuid4)
+    data = Column(LargeBinary)
 
 
 class Product(Base):
@@ -54,7 +54,7 @@ class Product(Base):
     available_stock = Column(Integer, nullable=False)
     last_update_date = Column(Date, default=date.today)
     supplier_id = Column(BigInteger, ForeignKey('supplier.id'), nullable=False)
-    image_id = Column(UUID(), ForeignKey('image.id'))
+    image_id = Column(UUID, ForeignKey('image.id'))
 
     # supplier = relationship('Supplier', uselist=False, back_populates='supplier')
     # image = relationship('Image', backref='product')
