@@ -15,17 +15,16 @@ class ImageORM:
             if not product_to_add_image:
                 raise Exception(f'Product with id {product_id} not found')
             
-            image_id = uuid.uuid4()
-            new_image = Image(id=image_id, data=byte_array)
+            if product_to_add_image.image_id:
+                raise Exception(f'Product with id {product_id} already has image')
+            
+            new_image = Image(id=uuid.uuid4(), data=byte_array)
             db_session.add(new_image)
             db_session.commit()
 
-            if product_to_add_image.image_id is not None:
-                raise Exception(f'Product with id {product_id} already has image')
-            query = update(Product).where(Product.id == product_to_add_image.id).values(name='changed', image_id=new_image.id, last_update_date=date.today())
+            query = update(Product).where(Product.id == product_to_add_image.id).values(image_id=new_image.id, last_update_date=date.today())
             db_session.execute(query)
             db_session.commit()
-
 
     @staticmethod
     def delete_image(image_id: uuid.UUID):
@@ -38,15 +37,29 @@ class ImageORM:
                 raise Exception(f'Image with id {image_id} not found')    
 
     @staticmethod
-    def get_image_by_product_id(product_id: int):
+    def get_image_by_id(image_id: uuid.UUID):
         pass
 
-    # Получение изображения конкретного товара (по id товара)
     @staticmethod
     def get_image_by_product_id(product_id: int):
-        pass
+        with get_db_session() as db_session:
+            product = db_session.query(Product).filter(Product.id == product_id).one_or_none()
+            if not product:
+                raise Exception(f'Product with id {product_id} not found')
+            
+            if not product.image_id:
+                raise Exception(f'Product with id {product_id} has no image')
+            
+            image = db_session.query(Image).filter(Image.id == product.image_id).one_or_none()
+            return image.data
 
-    # Изменение изображения (на вход подается id изображения и новая строка для замены)
     @staticmethod
-    def change_image(image_id: uuid.UUID, byte_array: bytes):
-        pass
+    def change_image(image_id: uuid.UUID, data: bytes):
+        with get_db_session() as db_session:
+            image_to_change = db_session.query(Image).filter(Image.id == image_id).one_or_none()
+            if not image_to_change:
+                raise Exception(f'Image with id {image_id} not found')
+            
+            query = update(Image).where(Image.id == image_id).values(data=data)
+            db_session.execute(query)
+            db_session.commit()
