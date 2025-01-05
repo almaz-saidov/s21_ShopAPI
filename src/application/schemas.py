@@ -29,7 +29,7 @@ class ClientSchema(BaseModel):
 
 class ImageSchema(BaseModel):
     id: Optional[uuid.UUID] = None
-    image: bytes
+    data: bytes
 
     class Config:
         from_attributes = True
