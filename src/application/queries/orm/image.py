@@ -30,15 +30,20 @@ class ImageORM:
     def delete_image(image_id: uuid.UUID):
         with get_db_session() as db_session:
             image_to_delete = db_session.query(Image).filter(Image.id == image_id).one_or_none()
-            if image_to_delete:
-                db_session.delete(image_to_delete)
-                db_session.commit()
-            else:
+            if not image_to_delete:
                 raise Exception(f'Image with id {image_id} not found')    
+            
+            db_session.delete(image_to_delete)
+            db_session.commit()
 
     @staticmethod
     def get_image_by_id(image_id: uuid.UUID):
-        pass
+        with get_db_session() as db_session:
+            image = db_session.query(Image).filter(Image.id == image_id).one_or_none()
+            if not image:
+                raise Exception(f'Image with id {image_id} not found')
+            
+            return image.data
 
     @staticmethod
     def get_image_by_product_id(product_id: int):

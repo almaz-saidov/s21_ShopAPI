@@ -15,14 +15,15 @@ class AddressORM:
             address = db_session.query(Address).filter(Address.id == address_id).one_or_none()
             if not address:
                 raise Exception(f'Address with id {address_id} not found')                
+            
             return address
 
     @staticmethod
     def delete_address(address_id: int):
         with get_db_session() as db_session:
             address_to_delete = db_session.query(Address).filter(Address.id == address_id).one_or_none()
-            if address_to_delete:
-                db_session.delete(address_to_delete)
-                db_session.commit()
-            else:
+            if not address_to_delete:
                 raise Exception(f'Address with id {address_id} not found')
+            
+            db_session.delete(address_to_delete)
+            db_session.commit()

@@ -17,11 +17,11 @@ class ClientORM:
     def delete_client(client_id: int):
         with get_db_session() as db_session:
             client_to_delete = db_session.query(Client).filter(Client.id == client_id).one_or_none()
-            if client_to_delete:
-                db_session.delete(client_to_delete)
-                db_session.commit()
-            else:
+            if not client_to_delete:
                 raise Exception(f'Client with id {client_id} not found')
+            
+            db_session.delete(client_to_delete)
+            db_session.commit()
 
     @staticmethod
     def get_all_clients(limit: int=0, offset: int=0):
@@ -33,7 +33,6 @@ class ClientORM:
     def get_client_by_name_and_surname(name: str, surname: str):
         with get_db_session() as db_session:
             client = db_session.query(Client).filter(Client.client_name == name, Client.client_surname == surname).one_or_none()
-            
             if not client:
                 raise Exception(f'Client with name {name} and surname {surname} not found')
             
@@ -43,7 +42,6 @@ class ClientORM:
     def change_client_address(client_id: int, new_address: json.dumps):
         with get_db_session() as db_session:
             client_to_change_address = db_session.query(Client).filter(Client.id == client_id).one_or_none()
-            
             if not client_to_change_address:
                 raise Exception(f'Client with id {client_id} not found')
             

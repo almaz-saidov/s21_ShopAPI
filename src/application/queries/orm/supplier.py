@@ -17,11 +17,11 @@ class SupplierORM:
     def delete_supplier(supplier_id: int):
         with get_db_session() as db_session:
             supplier_to_delete = db_session.query(Supplier).filter(Supplier.id == supplier_id).one_or_none()
-            if supplier_to_delete:
-                db_session.delete(supplier_to_delete)
-                db_session.commit()
-            else:
+            if not supplier_to_delete:
                 raise Exception(f'Client with id {supplier_id} not found')
+            
+            db_session.delete(supplier_to_delete)
+            db_session.commit()
 
     @staticmethod
     def get_all_suppliers():
@@ -34,13 +34,13 @@ class SupplierORM:
             supplier = db_session.query(Supplier).filter(Supplier.id == supplier_id).one_or_none()
             if not supplier:
                 raise Exception(f'Supplier with id {supplier_id} not found')
+            
             return supplier
 
     @staticmethod
     def change_supplier_address(supplier_id: int, new_address: Address):
         with get_db_session() as db_session:
             supplier_to_change_address = db_session.query(Supplier).filter(Supplier.id == supplier_id).one_or_none()
-            
             if not supplier_to_change_address:
                 raise Exception(f'Client with id {supplier_id} not found')
             

@@ -15,11 +15,10 @@ class ProductORM:
     def delete_product(prudct_id: int):
         with get_db_session() as db_session:
             product_to_delete = db_session.query(Product).filter(Product.id == prudct_id).one_or_none()
-            if product_to_delete:
-                db_session.delete(product_to_delete)
-                db_session.commit()
-            else:
+            if not product_to_delete:
                 raise Exception(f'Product with id {prudct_id} not found')
+            db_session.delete(product_to_delete)
+            db_session.commit()
 
     @staticmethod
     def get_all_available_products():
@@ -32,6 +31,7 @@ class ProductORM:
             product = db_session.query(Product).filter(Product.id == product_id).one_or_none()
             if not product:
                 raise Exception(f'Product with id {product_id} not found')                
+            
             return product
 
     @staticmethod
