@@ -40,7 +40,7 @@ def delete_product():
         return jsonify({'message': 'Request body must be JSON'}), 400
     
     try:
-        product_id = int(request.json['id'])
+        product_id = int(request.json['product_id'])
         ProductORM.delete_product(product_id)
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
@@ -53,24 +53,24 @@ def get_all_available_products():
     try:
         all_available_products = ProductORM.get_all_available_products()
     except Exception as e:
-        return jsonify({'message': f'{e}'})
+        return jsonify({'message': f'{e}'}), 400
     else:
         json_all_available_products = [ProductDTO(product).map_product_dto_to_json() for product in all_available_products]
-        return jsonify({'message': 'Success', 'all_available_products': json_all_available_products})
+        return jsonify({'message': 'Success', 'all_available_products': json_all_available_products}), 200
 
 
-@bp.get('/get_product')
-def get_product():
+@bp.get('/get_product_by_id')
+def get_product_by_id():
     if not request.is_json:
         return jsonify({'message': 'Request body must be JSON'}), 400
 
     try:
         product_id = int(request.json['product_id'])
-        ProductORM.get_product(product_id)
+        product = ProductORM.get_product_by_id(product_id)
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'})
+        return jsonify({'message': 'Success', 'product': ProductDTO(product).map_product_dto_to_json()}), 200
 
 
 @bp.post('/reduce_product')
@@ -85,4 +85,4 @@ def reduce_product():
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'})
+        return jsonify({'message': 'Success'}), 200

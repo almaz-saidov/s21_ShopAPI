@@ -26,7 +26,7 @@ class ProductORM:
             return db_session.query(Product).filter(Product.available_stock > 0).all()
 
     @staticmethod
-    def get_product(product_id: int):
+    def get_product_by_id(product_id: int):
         with get_db_session() as db_session:
             product = db_session.query(Product).filter(Product.id == product_id).one_or_none()
             if not product:
