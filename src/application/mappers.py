@@ -1,6 +1,6 @@
 import json
 
-from application.models import Address, Client, Image, Product, Supplier
+from application.models import Address, Client, Product, Supplier
 from application.queries.orm.address import AddressORM
 
 
@@ -26,15 +26,6 @@ class ClientDTO:
         self.address = AddressDTO(AddressORM.get_address(client.address_id)).map_address_dto_to_json()
 
     def map_client_dto_to_json(self):
-        return json.dumps(self.__dict__, indent=4)
-
-
-class ImageDTO:
-    def __init__(self, image: Image):
-        self.id = image.id
-        self.data = image.data
-
-    def map_image_dto_to_json(self):
         return json.dumps(self.__dict__, indent=4)
 
 
