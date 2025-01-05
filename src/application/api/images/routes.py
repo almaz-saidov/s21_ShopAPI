@@ -2,8 +2,6 @@ import uuid
 
 from flask import jsonify, request, Response
 
-from application.mappers import ImageDTO
-from application.models import Image
 from application.schemas import ImageSchema
 from application.queries.orm.image import ImageORM
 from . import bp
@@ -52,6 +50,7 @@ def get_image_by_id():
     else:
         response = Response(data)
         response.headers['Content-Type'] = 'application/octet-stream'
+        response.headers['Content-Disposition'] = 'attachment; filename="image.png"'
         return response
 
 
