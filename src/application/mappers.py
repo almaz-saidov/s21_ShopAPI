@@ -6,7 +6,6 @@ from application.queries.orm.address import AddressORM
 
 class AddressDTO:
     def __init__(self, address: Address):
-        self.id = address.id
         self.country = address.country
         self.city = address.city
         self.street = address.street
@@ -17,7 +16,6 @@ class AddressDTO:
 
 class ClientDTO:
     def __init__(self, client: Client):
-        self.id = client.id
         self.client_name = client.client_name
         self.client_surname = client.client_surname
         self.birthday = client.birthday.isoformat()
@@ -31,7 +29,6 @@ class ClientDTO:
 
 class ProductDTO:
     def __init__(self, product: Product):
-        self.id = product.id
         self.name = product.name
         self.category = product.category
         self.price = product.price
@@ -44,7 +41,6 @@ class ProductDTO:
 
 class SupplierDTO:
     def __init__(self, supplier: Supplier):
-        self.id = supplier.id
         self.name = supplier.name
         self.address = AddressDTO(AddressORM.get_address(supplier.address_id)).map_address_dto_to_json()
         self.phone_number = supplier.phone_number
