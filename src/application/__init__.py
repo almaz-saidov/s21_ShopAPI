@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_swagger_ui import get_swaggerui_blueprint
 
 from config import settings
 
@@ -19,5 +20,16 @@ def create_app():
     app.register_blueprint(images_bp)
     app.register_blueprint(products_bp)
     app.register_blueprint(suppliers_bp)
+
+    SWAGGER_URL = '/swagger/index.html'
+    API_URL = '/static/swagger.yaml'
+
+    swaggerui_blueprint = get_swaggerui_blueprint(
+        SWAGGER_URL,
+        API_URL,
+        config={'app_name': 'Shop API'}
+    )
+
+    app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
     return app
