@@ -1,4 +1,5 @@
 from flask import jsonify, request
+from werkzeug.exceptions import NotFound
 
 from application.mappers import AddressDTO
 from application.models import Address
@@ -35,6 +36,8 @@ def get_address():
     try:
         address_id = int(request.json['address_id'])
         address = AddressORM.get_address(address_id)
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
@@ -49,6 +52,8 @@ def delete_address():
     try:
         address_id = int(request.json['address_id'])
         AddressORM.delete_address(address_id)
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:

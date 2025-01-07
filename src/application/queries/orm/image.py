@@ -2,6 +2,7 @@ from datetime import date
 import uuid
 
 from sqlalchemy import update
+from werkzeug.exceptions import NotFound
 
 from application.database import get_db_session
 from application.models import Image, Product
@@ -12,8 +13,9 @@ class ImageORM:
     def add_image(byte_array: bytes, product_id: int):
         with get_db_session() as db_session:
             product_to_add_image = db_session.query(Product).filter(Product.id == product_id).one_or_none()
+            
             if not product_to_add_image:
-                raise Exception(f'Product with id {product_id} not found')
+                raise NotFound(f'Product with id {product_id} not found')
             
             if product_to_add_image.image_id:
                 raise Exception(f'Product with id {product_id} already has image')
@@ -30,8 +32,9 @@ class ImageORM:
     def delete_image(image_id: uuid.UUID):
         with get_db_session() as db_session:
             image_to_delete = db_session.query(Image).filter(Image.id == image_id).one_or_none()
+            
             if not image_to_delete:
-                raise Exception(f'Image with id {image_id} not found')    
+                raise NotFound(f'Image with id {image_id} not found')    
             
             db_session.delete(image_to_delete)
             db_session.commit()
@@ -40,8 +43,9 @@ class ImageORM:
     def get_image_by_id(image_id: uuid.UUID):
         with get_db_session() as db_session:
             image = db_session.query(Image).filter(Image.id == image_id).one_or_none()
+            
             if not image:
-                raise Exception(f'Image with id {image_id} not found')
+                raise NotFound(f'Image with id {image_id} not found')
             
             return image.data
 
@@ -49,8 +53,9 @@ class ImageORM:
     def get_image_by_product_id(product_id: int):
         with get_db_session() as db_session:
             product = db_session.query(Product).filter(Product.id == product_id).one_or_none()
+            
             if not product:
-                raise Exception(f'Product with id {product_id} not found')
+                raise NotFound(f'Product with id {product_id} not found')
             
             if not product.image_id:
                 raise Exception(f'Product with id {product_id} has no image')
@@ -62,8 +67,9 @@ class ImageORM:
     def change_image(image_id: uuid.UUID, data: bytes):
         with get_db_session() as db_session:
             image_to_change = db_session.query(Image).filter(Image.id == image_id).one_or_none()
+            
             if not image_to_change:
-                raise Exception(f'Image with id {image_id} not found')
+                raise NotFound(f'Image with id {image_id} not found')
             
             query = update(Image).where(Image.id == image_id).values(data=data)
             db_session.execute(query)

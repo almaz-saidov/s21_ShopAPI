@@ -1,6 +1,7 @@
 import uuid
 
 from flask import jsonify, request, Response
+from werkzeug.exceptions import NotFound
 
 from application.schemas import ImageSchema
 from application.queries.orm.image import ImageORM
@@ -17,6 +18,8 @@ def add_image():
         request_data = request.data
         image_schema = ImageSchema(data=request_data)
         ImageORM.add_image(image_schema.data, product_id)
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
@@ -31,6 +34,8 @@ def delete_image():
     try:
         image_id = uuid.UUID(request.json['image_id'])
         ImageORM.delete_image(image_id)
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'})
     else:
@@ -45,6 +50,8 @@ def get_image_by_id():
     try:
         image_id = uuid.UUID(request.json['image_id'])
         data = ImageORM.get_image_by_id(image_id)
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'})
     else:
@@ -62,6 +69,8 @@ def get_image_by_product_id():
     try:
         product_id = int(request.json['product_id'])
         data = ImageORM.get_image_by_product_id(product_id)
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'})
     else:
@@ -81,6 +90,8 @@ def change_image():
         request_data = request.data
         image_schema = ImageSchema(data=request_data)
         ImageORM.change_image(image_id, image_schema.data)
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:

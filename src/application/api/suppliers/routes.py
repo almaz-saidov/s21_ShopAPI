@@ -1,4 +1,5 @@
 from flask import jsonify, request
+from werkzeug.exceptions import NotFound
 
 from application.mappers import AddressDTO, SupplierDTO
 from application.models import Address, Supplier
@@ -34,6 +35,8 @@ def delete_supplier():
 
     try:
         supplier_id = int(request.json['supplier_id'])
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
@@ -60,6 +63,8 @@ def get_supplier_by_id():
     try:
         supplier_id = int(request.json['supplier_id'])
         supplier = SupplierORM.get_supplier_by_id(supplier_id)
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
@@ -81,6 +86,8 @@ def change_supplier_address():
             street=new_address_schema.street
         )
         SupplierORM.change_supplier_address(supplier_id, AddressDTO(new_address).map_address_dto_to_json())
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:

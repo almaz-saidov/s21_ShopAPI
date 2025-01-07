@@ -1,6 +1,7 @@
 from datetime import date
 
 from flask import jsonify, request
+from werkzeug.exceptions import NotFound
 
 from application.mappers import AddressDTO, ClientDTO
 from application.models import Address, Client
@@ -40,6 +41,8 @@ def delete_client():
     try:
         client_id = int(request.json['client_id'])
         ClientORM.delete_client(client_id)
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
@@ -70,6 +73,8 @@ def get_client_by_name_and_surname():
         name = str(request_data['name'])
         surname = str(request_data['surname'])
         client = ClientORM.get_client_by_name_and_surname(name, surname)
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
@@ -91,6 +96,8 @@ def change_client_address():
             street=new_address_schema.street
         )
         ClientORM.change_client_address(client_id, AddressDTO(new_address).map_address_dto_to_json())
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:

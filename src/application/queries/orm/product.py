@@ -1,4 +1,5 @@
 from sqlalchemy import update
+from werkzeug.exceptions import NotFound
 
 from application.database import get_db_session
 from application.models import Product
@@ -15,8 +16,10 @@ class ProductORM:
     def delete_product(prudct_id: int):
         with get_db_session() as db_session:
             product_to_delete = db_session.query(Product).filter(Product.id == prudct_id).one_or_none()
+            
             if not product_to_delete:
-                raise Exception(f'Product with id {prudct_id} not found')
+                raise NotFound(f'Product with id {prudct_id} not found')
+            
             db_session.delete(product_to_delete)
             db_session.commit()
 
@@ -29,8 +32,9 @@ class ProductORM:
     def get_product_by_id(product_id: int):
         with get_db_session() as db_session:
             product = db_session.query(Product).filter(Product.id == product_id).one_or_none()
+            
             if not product:
-                raise Exception(f'Product with id {product_id} not found')                
+                raise NotFound(f'Product with id {product_id} not found')                
             
             return product
 
@@ -40,7 +44,7 @@ class ProductORM:
             product = db_session.query(Product).filter(Product.id == product_id).one_or_none()
             
             if not product:
-                raise Exception(f'Product with id {product_id} not found')
+                raise NotFound(f'Product with id {product_id} not found')
 
             if product.available_stock < reduce_by:
                 raise Exception(f'Available stock is {product.available_stock}')

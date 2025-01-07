@@ -1,6 +1,7 @@
 from datetime import date
 
 from flask import jsonify, request
+from werkzeug.exceptions import NotFound
 
 from application.mappers import ProductDTO
 from application.models import Product
@@ -42,6 +43,8 @@ def delete_product():
     try:
         product_id = int(request.json['product_id'])
         ProductORM.delete_product(product_id)
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
@@ -67,6 +70,8 @@ def get_product_by_id():
     try:
         product_id = int(request.json['product_id'])
         product = ProductORM.get_product_by_id(product_id)
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
@@ -82,6 +87,8 @@ def reduce_product():
         product_id = int(request.json['product_id'])
         reduce_by = int(request.json['reduce_by'])
         ProductORM.reduce_product(product_id, reduce_by)
+    except NotFound as e:
+        return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:

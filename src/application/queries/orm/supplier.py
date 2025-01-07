@@ -1,6 +1,7 @@
 import json
 
 from sqlalchemy import update
+from werkzeug.exceptions import NotFound
 
 from application.database import get_db_session
 from application.models import Address, Supplier
@@ -17,8 +18,9 @@ class SupplierORM:
     def delete_supplier(supplier_id: int):
         with get_db_session() as db_session:
             supplier_to_delete = db_session.query(Supplier).filter(Supplier.id == supplier_id).one_or_none()
+            
             if not supplier_to_delete:
-                raise Exception(f'Client with id {supplier_id} not found')
+                raise NotFound(f'Client with id {supplier_id} not found')
             
             db_session.delete(supplier_to_delete)
             db_session.commit()
@@ -32,8 +34,9 @@ class SupplierORM:
     def get_supplier_by_id(supplier_id: int):
         with get_db_session() as db_session:
             supplier = db_session.query(Supplier).filter(Supplier.id == supplier_id).one_or_none()
+            
             if not supplier:
-                raise Exception(f'Supplier with id {supplier_id} not found')
+                raise NotFound(f'Supplier with id {supplier_id} not found')
             
             return supplier
 
@@ -41,8 +44,9 @@ class SupplierORM:
     def change_supplier_address(supplier_id: int, new_address: Address):
         with get_db_session() as db_session:
             supplier_to_change_address = db_session.query(Supplier).filter(Supplier.id == supplier_id).one_or_none()
+            
             if not supplier_to_change_address:
-                raise Exception(f'Client with id {supplier_id} not found')
+                raise NotFound(f'Client with id {supplier_id} not found')
             
             new_address = json.loads(new_address)
             query = update(Address).where(Address.id == supplier_to_change_address.address_id).values(country=new_address['country'], city=new_address['city'], street=new_address['street'])
