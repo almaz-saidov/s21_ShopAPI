@@ -25,7 +25,7 @@ def add_address():
             street=address_schema.street
         )
         AddressORM.add_address(new_address)
-        return jsonify({'message': 'Success'}), 200
+        return jsonify({'message': 'Success'}), 201
 
 
 @bp.get('/get_address')
