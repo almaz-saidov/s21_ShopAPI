@@ -1,0 +1,873 @@
+openapi: 3.0.0
+
+info:
+  title: Shop API
+  description: API for home appliance store.
+  version: 1.0.0
+
+tags:
+  - name: Addresses
+    description: API for managing addresses
+  - name: Clients
+    description: API for managing clients
+  - name: Images
+    description: API for handling images
+  - name: Products
+    description: API for managing products
+  - name: Suppliers
+    description: API for managing suppliers
+
+servers:
+  - url: http://localhost:8080/api
+    description: Local server
+
+paths:
+  /add_address:
+    post:
+      summary: Create new address
+      tags: [Addresses]
+      requestBody:
+        description: A new address to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+      responses:
+        '201':
+          description: Address added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Success'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+  /get_address:
+    get:
+      summary: Get address by ID
+      tags: [Addresses]
+      requestBody:
+        description: The address that needs to be obtained by its ID
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/GetDeleteAddress'
+      responses:
+        '200':
+          description: Address was found successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+  /delete_address:
+    delete:
+      summary: Delete address by ID
+      tags: [Addresses]
+      requestBody:
+        description: The address that needs to be deleted by its ID
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/GetDeleteAddress'
+      responses:
+        '204':
+          description: Address successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Success'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+  
+  /add_client:
+    post:
+      summary: Add new client
+      tags: [Clients]
+      requestBody:
+        description: A new client to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '201':
+          description: The client has been successfully added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Success'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+  /delete_client:
+    delete:
+      summary: Delete client by ID
+      tags: [Clients]
+      requestBody:
+        description: The client who needs to be deleted by his ID
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: integer
+                  description: The client's ID in the database
+                  example: 1
+      responses:
+        '204':
+          description: The client was successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Success'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: The client was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+  /get_all_clients:
+    get:
+      summary: Get all clients
+      tags: [Clients]
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of items to return
+          required: false
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: Offset from the beginning of the list
+          required: false
+      responses:
+        '200':
+          description: List of all clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+  /get_client_by_name_and_surname:
+    get:
+      summary: Get client by his name and surname
+      tags: [Clients]
+      requestBody:
+        description: The client you need to get by his first and last name
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Client name
+                  example: John
+                surname:
+                  type: string
+                  description: Client Surname
+                  example: Johnson
+      responses:
+        '200':
+          description: The client was successfully found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: The client was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+  /change_client_address:
+    patch:
+      summary: Change the client's address by his ID
+      tags: [Clients]
+      requestBody:
+        description: ID of the client whose address needs to be changed; new address
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: integer
+                  description: The client's ID in the database
+                  example: 1
+                new_address:
+                  $ref: '#/components/schemas/Address'
+      responses:
+        '204':
+          description: The client's address has been successfully changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Success'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: The client was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+
+  /add_image:
+    post:
+      summary: Add image
+      tags: [Images]
+      parameters:
+      - in: query
+        name: product_id
+        schema:
+          type: integer
+          description: The ID of the product to add an image for
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+              description: Binary image data
+      responses:
+        '201':
+          description: Image successfully added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Success'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: The product for which you need to add an image has not been found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+  /delete_image:
+    delete:
+      summary: Delete image by UUID
+      tags: [Images]
+      requestBody:
+        description: The UUID to delete the image by
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/GetDeleteImageById'
+      responses:
+        '204':
+          description: The image was successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Success'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+  /get_image_by_id:
+    get:
+      summary: Get an image by UUID
+      tags: [Images]
+      requestBody:
+        description: The UUID used to get the image
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/GetDeleteImageById'
+      responses:
+        '200':
+          description: Image found successfully
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+  /get_image_by_product_id:
+    get:
+      summary: Get a product image by its ID
+      tags: [Images]
+      requestBody:
+        description: The ID of the product to get the image of
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: integer
+                  description: Product ID in the database
+                  example: 1
+      responses:
+        '200':
+          description: Image found successfully
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+  /change_image:
+    patch:
+      summary: Replace the product image by its ID
+      tags: [Images]
+      parameters:
+        - in: query
+          name: product_id
+          schema:
+            type: integer
+          description: Product ID in the database
+          required: true
+      requestBody:
+        description: The ID of the product whose image needs to be replaced
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+              description: Binary image data
+      responses:
+        '204':
+          description: The image has been successfully replaced
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Success'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+
+  /add_product:
+    post:
+        summary: Add new product
+        tags: [Products]
+        requestBody:
+          description: A new product that needs to be added
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        responses:
+          '201':
+            description: Product added successfully
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/Success'
+          '400':
+            description: Error on the client side
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/Error'
+  /delete_product:
+    delete:
+      summary: Delete product by ID
+      tags: [Products]
+      requestBody:
+        description: The product that needs to be deleted by its ID
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: integer
+                  description: Product ID in the database
+                  example: 1
+      responses:
+        '204':
+          description: The product was successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Success'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+  /get_all_available_products:
+    get:
+      summary: Get all the products available for sale
+      tags: [Products]
+      responses:
+        '200':
+          description: List of all products available for sale
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+  /get_product_by_id:
+    get:
+      summary: Get a product by ID
+      tags: [Products]
+      requestBody:
+        description: The product that needs to be obtained by its ID
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: integer
+                  description: Product ID in the database
+                  example: 1
+      responses:
+        '200':
+          description: The product was successfully found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+  /reduce_product:
+    patch:
+      summary: Reduce the quantity of a product by its ID
+      tags: [Products]
+      requestBody:
+        description: ID of the product to reduce its quantity
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: integer
+                  description: Product ID in the database
+                  example: 1
+                reduce_by:
+                  type: integer
+                  description: How much should be reduced
+                  example: 6
+      responses:
+        '204':
+          description: The number has been successfully reduced
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Success'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+
+  /add_supplier:
+    post:
+        summary: Add a new supplier
+        tags: [Suppliers]
+        requestBody:
+          description: A new supplier to add
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Supplier'
+        responses:
+          '201':
+            description: Supplier added successfully
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/Success'
+          '400':
+            description: Error on the client side
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/Error'
+  /delete_supplier:
+    delete:
+      delete:
+      summary: Delete seupplier by ID
+      tags: [Suppliers]
+      requestBody:
+        description: The supplier that needs to be deleted by its ID
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                supplier_id:
+                  type: integer
+                  description: Supplier's ID in the database
+                  example: 1
+      responses:
+        '204':
+          description: The supplier was successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Success'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+  /get_all_suppliers:
+    get:
+      summary: Get all suppliers
+      tags: [Suppliers]
+      responses:
+        '200':
+          description: List of all suppliers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Supplier'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+  /get_supplier_by_id:
+    get:
+      summary: Get supplier by ID
+      tags: [Suppliers]
+      requestBody:
+        description: The supplier you need to get by his ID
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: integer
+                  description: The supplier's ID in the database
+                  example: 1
+      responses:
+        '200':
+          description: Supplier found successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Supplier'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: Supplier not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+  /change_supplier_address:
+    patch:
+      summary: Change the supplier's address by its ID
+      tags: [Suppliers]
+      requestBody:
+        description: ID of the supplier whose address needs to be changed; new address
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: integer
+                  description: Supplier's ID in the database
+                  example: 1
+                new_address:
+                  $ref: '#/components/schemas/Supplier'
+      responses:
+        '204':
+          description: The supplier's address has been successfully changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Success'
+        '400':
+          description: Error on the client side
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/Error'
+        '404':
+          description: Supplier not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/NotFound'
+
+components:
+  schemas:
+    Address:
+      type: object
+      properties:
+        country:
+          type: string
+          description: Country
+          example: Russia
+        city:
+          type: string
+          description: City
+          example: Moscow
+        street:
+          type: string
+          description: Street
+          example: Lenin str
+    Client:
+      type: object
+      properties:
+        client_name:
+          type: string
+          description: Client name
+          example: John
+        client_surname:
+          type: string
+          description: Client surname
+          example: Johnson
+        birthday:
+          type: string
+          description: Birthday
+          example: 2003-11-12
+        gender:
+          type: string
+          description: Gender
+          example: male
+        address_id:
+          type: integer
+          description: Address ID
+          example: 1
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name
+          example: sink
+        category:
+          type: string
+          description: Category
+          example: plumbing
+        price:
+          type: integer
+          description: Price
+          example: 13999
+        available_stock:
+          type: integer
+          description: Available for sale
+          example: 7
+        supplier_id:
+          type: integer
+          description: Supplier ID
+          example: 1
+    Supplier:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Supplier name
+          example: Jonathan
+        address_id:
+          type: integer
+          description: ID in the supplier's address database
+          example: 2
+        phone_number:
+          type: string
+          description: Phone number
+          example: +7-777-777-77-77
+
+  GetDeleteAddress:
+    type: object
+    properties:
+      address_id:
+        type: integer
+        description: The address ID in the database
+        example: 1
+  
+  GetDeleteImageById:
+    type: object
+    properties:
+      image_id:
+        type: string
+        description: The UUID of the image in the database
+        example: 7744b4cb-56f6-4d5e-9a00-aa1907a8f89b
+
+  Success:
+    type: object
+    properties:
+        message:
+          type: string
+          description: Success
+          example: Success
+  Error:
+    type: object
+    properties:
+        message:
+          type: string
+          description: Error message
+          example: Request body must be JSON
+  NotFound:
+    type: object
+    properties:
+        message:
+          type: string
+          description: Object not found
+          example: Object with id ... not found
