@@ -57,4 +57,4 @@ def delete_address():
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 200
+        return jsonify({'message': 'Success'}), 204

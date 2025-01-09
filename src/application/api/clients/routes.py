@@ -30,7 +30,7 @@ def add_client():
             address_id=client_schema.address_id
         )
         ClientORM.add_client(new_client)
-        return jsonify({'message': 'Success'}), 200
+        return jsonify({'message': 'Success'}), 201
 
 
 @bp.delete('/delete_client')
@@ -46,7 +46,7 @@ def delete_client():
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 200
+        return jsonify({'message': 'Success'}), 204
 
 
 @bp.get('/get_all_clients')
@@ -81,7 +81,7 @@ def get_client_by_name_and_surname():
         return jsonify({'message': 'Success', 'client': ClientDTO(client).map_client_dto_to_json()}), 200
 
 
-@bp.post('/change_client_address')
+@bp.patch('/change_client_address')
 def change_client_address():
     if not request.is_json:
         return jsonify({'message': 'Request body must be JSON'}), 400
@@ -101,4 +101,4 @@ def change_client_address():
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 200
+        return jsonify({'message': 'Success'}), 204

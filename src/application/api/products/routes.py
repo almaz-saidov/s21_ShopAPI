@@ -32,7 +32,7 @@ def add_product():
         )
         ProductORM.add_product(new_product)
 
-    return jsonify({'message': 'Success'}), 200
+    return jsonify({'message': 'Success'}), 201
 
 
 @bp.delete('/delete_product')
@@ -48,7 +48,7 @@ def delete_product():
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 200
+        return jsonify({'message': 'Success'}), 204
 
 
 @bp.get('/get_all_available_products')
@@ -78,7 +78,7 @@ def get_product_by_id():
         return jsonify({'message': 'Success', 'product': ProductDTO(product).map_product_dto_to_json()}), 200
 
 
-@bp.post('/reduce_product')
+@bp.patch('/reduce_product')
 def reduce_product():
     if not request.is_json:
         return jsonify({'message': 'Request body must be JSON'}), 400
@@ -92,4 +92,4 @@ def reduce_product():
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 200
+        return jsonify({'message': 'Success'}), 204

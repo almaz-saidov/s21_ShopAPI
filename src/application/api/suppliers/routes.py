@@ -25,7 +25,7 @@ def add_supplier():
             phone_number=supplier_schema.phone_number
         )
         SupplierORM.add_supplier(new_supplier)
-        return jsonify({'message': 'Success'}), 200
+        return jsonify({'message': 'Success'}), 201
 
 
 @bp.delete('/delete_supplier')
@@ -41,7 +41,7 @@ def delete_supplier():
         return jsonify({'message': f'{e}'}), 400
     else:
         SupplierORM.delete_supplier(supplier_id)
-        return jsonify({'message': 'Success'})
+        return jsonify({'message': 'Success'}), 204
     
 
 @bp.get('/get_all_suppliers')
@@ -68,10 +68,10 @@ def get_supplier_by_id():
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success', 'supplier': SupplierDTO(supplier).map_supplier_dto_to_json()})
+        return jsonify({'message': 'Success', 'supplier': SupplierDTO(supplier).map_supplier_dto_to_json()}), 200
 
 
-@bp.post('/change_supplier_address')
+@bp.patch('/change_supplier_address')
 def change_supplier_address():
     if not request.is_json:
         return jsonify({'message': 'Request body must be JSON'}), 400
@@ -91,4 +91,4 @@ def change_supplier_address():
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 200
+        return jsonify({'message': 'Success'}), 204

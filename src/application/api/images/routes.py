@@ -23,7 +23,7 @@ def add_image():
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 200
+        return jsonify({'message': 'Success'}), 201
     
 
 @bp.delete('/delete_image')
@@ -37,9 +37,9 @@ def delete_image():
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
     except Exception as e:
-        return jsonify({'message': f'{e}'})
+        return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 200
+        return jsonify({'message': 'Success'}), 204
 
 
 @bp.get('/get_image_by_id')
@@ -53,12 +53,12 @@ def get_image_by_id():
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
     except Exception as e:
-        return jsonify({'message': f'{e}'})
+        return jsonify({'message': f'{e}'}), 400
     else:
         response = Response(data)
         response.headers['Content-Type'] = 'application/octet-stream'
         response.headers['Content-Disposition'] = 'attachment; filename="image.png"'
-        return response
+        return response, 200
 
 
 @bp.get('/get_image_by_product_id')
@@ -72,15 +72,15 @@ def get_image_by_product_id():
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
     except Exception as e:
-        return jsonify({'message': f'{e}'})
+        return jsonify({'message': f'{e}'}), 400
     else:
         response = Response(data)
         response.headers['Content-Type'] = 'application/octet-stream'
         response.headers['Content-Disposition'] = 'attachment; filename="image.png"'
-        return response
+        return response, 200
 
 
-@bp.post('/change_image')
+@bp.patch('/change_image')
 def change_image():
     if not request.data:
         return jsonify({'message': 'Request body must contain image byte array'}), 400
@@ -95,4 +95,4 @@ def change_image():
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 200
+        return jsonify({'message': 'Success'}), 204
