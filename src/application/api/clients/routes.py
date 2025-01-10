@@ -10,7 +10,7 @@ from application.queries.orm.client import ClientORM
 from . import bp
 
 
-@bp.post('/add_client')
+@bp.post('/clients')
 def add_client():
     if not request.is_json: 
         return jsonify({'message': 'Request body must be JSON'}), 400
@@ -33,28 +33,26 @@ def add_client():
         return jsonify({'message': 'Success'}), 201
 
 
-@bp.delete('/delete_client')
+@bp.delete('/clients')
 def delete_client():
-    if not request.is_json: 
-        return jsonify({'message': 'Request body must be JSON'}), 400
-
     try:
-        client_id = int(request.json['client_id'])
+        client_id = request.args.get('cleint_id', default=None)
+        if not client_id:
+            return jsonify({'message': 'Request must contain query parameter: client_id'}), 400
         ClientORM.delete_client(client_id)
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 204
+        return '', 204
 
 
-@bp.get('/get_all_clients')
+@bp.get('/all-clients')
 def get_all_clients():
-    limit = request.args.get('limit', default=None)
-    offset = request.args.get('offset', default=None)
-
     try:
+        limit = request.args.get('limit', default=None)
+        offset = request.args.get('offset', default=None)
         clients = ClientORM.get_all_clients(limit, offset)
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
@@ -63,15 +61,13 @@ def get_all_clients():
         return jsonify({'message': 'Success', 'clients': json_clients}), 200
 
 
-@bp.get('/get_client_by_name_and_surname')
+@bp.get('/clients')
 def get_client_by_name_and_surname():
-    if not request.is_json:
-        return jsonify({'message': 'Request body must be JSON'}), 400
-
     try:
-        request_data = request.json
-        name = str(request_data['name'])
-        surname = str(request_data['surname'])
+        name = request.args.get('name', default=None)
+        surname = request.args.get('surname', default=None)
+        if not name or not surname: 
+            return jsonify({'message': 'Request must contain query parameters: name, surname'}), 400
         client = ClientORM.get_client_by_name_and_surname(name, surname)
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
@@ -81,15 +77,17 @@ def get_client_by_name_and_surname():
         return jsonify({'message': 'Success', 'client': ClientDTO(client).map_client_dto_to_json()}), 200
 
 
-@bp.patch('/change_client_address')
+@bp.patch('/clients')
 def change_client_address():
     if not request.is_json:
         return jsonify({'message': 'Request body must be JSON'}), 400
 
     try:
         request_data = request.json
-        client_id = int(request_data['client_id'])
-        new_address_schema = AddressSchema(**request_data['new_address'])
+        client_id = request.args.get('client_id', default=None)
+        if not client_id: 
+            return jsonify({'message': 'Request must contain query parameter: client_id'}), 400
+        new_address_schema = AddressSchema(**request_data)
         new_address = Address(
             country=new_address_schema.country,
             city=new_address_schema.city,
@@ -101,4 +99,4 @@ def change_client_address():
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 204
+        return jsonify({'message': 'Success'}), 200 # and new address

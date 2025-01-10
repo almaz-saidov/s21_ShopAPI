@@ -8,7 +8,7 @@ from application.queries.orm.image import ImageORM
 from . import bp
 
 
-@bp.post('/add_image')
+@bp.post('/images')
 def add_image():
     if not request.data:
         return jsonify({'message': 'Request body must contain image byte array'}), 400
@@ -26,29 +26,30 @@ def add_image():
         return jsonify({'message': 'Success'}), 201
     
 
-@bp.delete('/delete_image')
+@bp.delete('/images')
 def delete_image():
     if not request.is_json:
         return jsonify({'message': 'Request body must be JSON'}), 400
 
     try:
-        image_id = uuid.UUID(request.json['image_id'])
+        image_id = uuid.UUID(request.args.get('image_id', default=None))
+        if not image_id:
+            return jsonify({'message': 'Request must contain query parameter: image_id'}), 400
         ImageORM.delete_image(image_id)
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 204
+        return '', 204
 
 
-@bp.get('/get_image_by_id')
+@bp.get('/images')
 def get_image_by_id():
-    if not request.is_json:
-        return jsonify({'message': 'Request body must be JSON'}), 400
-
     try:
-        image_id = uuid.UUID(request.json['image_id'])
+        image_id = uuid.UUID(request.args.get('image_id', default=None))
+        if not image_id:
+            return jsonify({'message': 'Request must contain query parameter: image_id'}), 400
         data = ImageORM.get_image_by_id(image_id)
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
@@ -61,13 +62,12 @@ def get_image_by_id():
         return response, 200
 
 
-@bp.get('/get_image_by_product_id')
+@bp.get('/images')
 def get_image_by_product_id():
-    if not request.is_json:
-        return jsonify({'message': 'Request body must be JSON'}), 400
- 
     try:
-        product_id = int(request.json['product_id'])
+        product_id = int(request.args.get('product_id', default=None))
+        if not product_id:
+            return jsonify({'message': 'Request must contain query parameter: product_id'}), 400
         data = ImageORM.get_image_by_product_id(product_id)
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
@@ -80,13 +80,15 @@ def get_image_by_product_id():
         return response, 200
 
 
-@bp.patch('/change_image')
+@bp.patch('/images')
 def change_image():
     if not request.data:
         return jsonify({'message': 'Request body must contain image byte array'}), 400
 
     try:
         image_id = uuid.UUID(request.args.get('image_id'))
+        if not image_id:
+            return jsonify({'message': 'Request must contain query parameter: image_id'}), 400
         request_data = request.data
         image_schema = ImageSchema(data=request_data)
         ImageORM.change_image(image_id, image_schema.data)
@@ -95,4 +97,4 @@ def change_image():
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 204
+        return '', 204

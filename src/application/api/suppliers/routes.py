@@ -8,7 +8,7 @@ from application.queries.orm.supplier import SupplierORM
 from . import bp
 
 
-@bp.post('/add_supplier')
+@bp.post('/suppliers')
 def add_supplier():
     if not request.is_json:
         return jsonify({'message': 'Request body must be JSON'}), 400
@@ -28,13 +28,12 @@ def add_supplier():
         return jsonify({'message': 'Success'}), 201
 
 
-@bp.delete('/delete_supplier')
+@bp.delete('/suppliers')
 def delete_supplier():
-    if not request.is_json:
-        return jsonify({'message': 'Request body must be JSON'}), 400
-
     try:
-        supplier_id = int(request.json['supplier_id'])
+        supplier_id = int(request.args.get('supplier_id', default=None))
+        if not supplier_id:
+            return jsonify({'message': 'Request must contain query parameter: supplier_id'}), 400
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
     except Exception as e:
@@ -44,7 +43,7 @@ def delete_supplier():
         return jsonify({'message': 'Success'}), 204
     
 
-@bp.get('/get_all_suppliers')
+@bp.get('/all-suppliers')
 def get_all_suppliers():
     try:
         all_suppliers = SupplierORM.get_all_suppliers()
@@ -55,13 +54,12 @@ def get_all_suppliers():
         return jsonify({'message': 'Success', 'all_suppliers': json_all_suppliers}), 200
 
 
-@bp.get('/get_supplier_by_id')
+@bp.get('/suppliers')
 def get_supplier_by_id():
-    if not request.is_json:
-        return jsonify({'message': 'Request body must be JSON'}), 400
-
     try:
-        supplier_id = int(request.json['supplier_id'])
+        supplier_id = int(request.args.get('supplier_id', default=None))
+        if not supplier_id:
+            return jsonify({'message': 'Request must contain query parameter: supplier_id'}), 400
         supplier = SupplierORM.get_supplier_by_id(supplier_id)
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
@@ -71,14 +69,16 @@ def get_supplier_by_id():
         return jsonify({'message': 'Success', 'supplier': SupplierDTO(supplier).map_supplier_dto_to_json()}), 200
 
 
-@bp.patch('/change_supplier_address')
+@bp.patch('/suppliers')
 def change_supplier_address():
     if not request.is_json:
         return jsonify({'message': 'Request body must be JSON'}), 400
 
     try:
         request_data = request.json
-        supplier_id = int(request_data['supplier_id'])
+        supplier_id = int(request.args.get('supplier_id', default=None))
+        if not supplier_id:
+            return jsonify({'message': 'Request must contain query parameter: supplier_id'}), 400
         new_address_schema = AddressSchema(**request_data['new_address'])
         new_address = Address(
             country=new_address_schema.country,
@@ -91,4 +91,4 @@ def change_supplier_address():
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 204
+        return jsonify({'message': 'Success'}), 204 # and new address

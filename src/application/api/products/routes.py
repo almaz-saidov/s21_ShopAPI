@@ -10,7 +10,7 @@ from application.queries.orm.product import ProductORM
 from . import bp
 
 
-@bp.post('/add_product')
+@bp.post('/products')
 def add_product():
     if not request.is_json:
         return jsonify({'message': 'Request body must be JSON'}), 400
@@ -35,13 +35,12 @@ def add_product():
     return jsonify({'message': 'Success'}), 201
 
 
-@bp.delete('/delete_product')
-def delete_product():
-    if not request.is_json:
-        return jsonify({'message': 'Request body must be JSON'}), 400
-    
+@bp.delete('/products')
+def delete_product():    
     try:
-        product_id = int(request.json['product_id'])
+        product_id = int(request.args.get('product_id', default=None))
+        if not product_id:
+            return jsonify({'message': 'Request must contain query parameter: product_id'}), 400
         ProductORM.delete_product(product_id)
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
@@ -51,7 +50,7 @@ def delete_product():
         return jsonify({'message': 'Success'}), 204
 
 
-@bp.get('/get_all_available_products')
+@bp.get('/all-available-products')
 def get_all_available_products():
     try:
         all_available_products = ProductORM.get_all_available_products()
@@ -62,13 +61,12 @@ def get_all_available_products():
         return jsonify({'message': 'Success', 'all_available_products': json_all_available_products}), 200
 
 
-@bp.get('/get_product_by_id')
+@bp.get('/products')
 def get_product_by_id():
-    if not request.is_json:
-        return jsonify({'message': 'Request body must be JSON'}), 400
-
     try:
-        product_id = int(request.json['product_id'])
+        product_id = int(request.args.get('product_id', default=None))
+        if not product_id:
+            return jsonify({'message': 'Request must contain query parameter: product_id'}), 400
         product = ProductORM.get_product_by_id(product_id)
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
@@ -78,18 +76,17 @@ def get_product_by_id():
         return jsonify({'message': 'Success', 'product': ProductDTO(product).map_product_dto_to_json()}), 200
 
 
-@bp.patch('/reduce_product')
+@bp.patch('/products')
 def reduce_product():
-    if not request.is_json:
-        return jsonify({'message': 'Request body must be JSON'}), 400
-
     try:
-        product_id = int(request.json['product_id'])
-        reduce_by = int(request.json['reduce_by'])
+        product_id = int(request.args.get('product_id', default=None))
+        reduce_by = int(request.args.get('reduce_by', default=None))
+        if not product_id or not reduce_by:
+            return jsonify({'message': 'Request must contain query parameters: product_id, reduce_by'}), 400
         ProductORM.reduce_product(product_id, reduce_by)
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 204
+        return jsonify({'message': 'Success'}), 200 # and new product
