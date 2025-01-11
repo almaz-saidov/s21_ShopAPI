@@ -10,10 +10,10 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = settings.DB_URL
 
     from application.api.addresses.routes import bp as addresses_bp
-    from .api.clients.routes import bp as clients_bp
-    from .api.images.routes import bp as images_bp
-    from .api.products.routes import bp as products_bp
-    from .api.suppliers.routes import bp as suppliers_bp
+    from application.api.clients.routes import bp as clients_bp
+    from application.api.images.routes import bp as images_bp
+    from application.api.products.routes import bp as products_bp
+    from application.api.suppliers.routes import bp as suppliers_bp
 
     app.register_blueprint(addresses_bp)
     app.register_blueprint(clients_bp)
