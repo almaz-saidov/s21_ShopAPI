@@ -1,17 +1,24 @@
-import json
-
 from sqlalchemy import update
 from werkzeug.exceptions import NotFound
 
 from application.database import get_db_session
+from application.dto.address import AddressDTO
+from application.dto.client import ClientDTO
 from application.models.address import Address
 from application.models.client import Client
 
 
 class ClientRepository:
-    def add_client(self, client: Client):
+    def add_client(self, client_dto: ClientDTO):
         with get_db_session() as db_session:
-            db_session.add(client)
+            db_session.add(Client(
+                client_name=client_dto.client_name,
+                client_surname=client_dto.client_surname,
+                birthday=client_dto.birthday,
+                gender=client_dto.gender,
+                registration_date=client_dto.registration_date,
+                address_id=client_dto.address_id
+            ))
             db_session.commit()
 
     def delete_client(self, client_id: int):
@@ -38,14 +45,17 @@ class ClientRepository:
             
             return client
 
-    def change_client_address(self, client_id: int, new_address: json.dumps):
+    def change_client_address(self, client_id: int, new_address: AddressDTO):
         with get_db_session() as db_session:
             client_to_change_address = db_session.query(Client).filter(Client.id == client_id).one_or_none()
             
             if not client_to_change_address:
                 raise NotFound(f'Client with id {client_id} not found')
             
-            new_address = json.loads(new_address)
-            query = update(Address).where(Address.id == client_to_change_address.address_id).values(country=new_address['country'], city=new_address['city'], street=new_address['street'])
+            query = update(Address).where(Address.id == client_to_change_address.address_id).values(country=new_address.country, city=new_address.city, street=new_address.street)
             db_session.execute(query)
             db_session.commit()
+
+            client = db_session.query(Client).filter(Client.id == client_id).one_or_none()
+            address = db_session.query(Address).filter(Address.id == client.address_id).one_or_none()
+            return client, address

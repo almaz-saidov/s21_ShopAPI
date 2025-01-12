@@ -2,21 +2,30 @@ from sqlalchemy import update
 from werkzeug.exceptions import NotFound
 
 from application.database import get_db_session
+from application.dto.product import ProductDTO
 from application.models.product import Product
 
 
-class ProductORM:
-    def add_product(self, product: Product):
+class ProductRepository:
+    def add_product(self, product_dto: ProductDTO):
         with get_db_session() as db_session:
-            db_session.add(product)
+            db_session.add(Product(
+                name=product_dto.name,
+                category=product_dto.category,
+                price=product_dto.price,
+                available_stock=product_dto.available_stock,
+                last_update_date=product_dto.last_update_date,
+                supplier_id=product_dto.supplier_id,
+                image_id=product_dto.image_id
+            ))
             db_session.commit()
 
-    def delete_product(self, prudct_id: int):
+    def delete_product(self, product_id: int):
         with get_db_session() as db_session:
-            product_to_delete = db_session.query(Product).filter(Product.id == prudct_id).one_or_none()
+            product_to_delete = db_session.query(Product).filter(Product.id == product_id).one_or_none()
             
             if not product_to_delete:
-                raise NotFound(f'Product with id {prudct_id} not found')
+                raise NotFound(f'Product with id {product_id} not found')
             
             db_session.delete(product_to_delete)
             db_session.commit()
@@ -47,3 +56,6 @@ class ProductORM:
             query = update(Product).where(Product.id == product_id).values(available_stock=Product.available_stock - reduce_by)
             db_session.execute(query)
             db_session.commit()
+            
+            product = db_session.query(Product).filter(Product.id == product_id).one_or_none()
+            return product

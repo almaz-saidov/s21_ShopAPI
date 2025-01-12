@@ -3,11 +3,13 @@ from datetime import date
 from flask import jsonify, request
 from werkzeug.exceptions import NotFound
 
-from application.mappers import ProductDTO
-from application.models import Product
+from application.dto.product import ProductDTO
+from application.models.product import Product
 from application.schemas import ProductSchema
-from application.queries.orm.product import ProductORM
+from application.repositories.product import ProductRepository
 from . import bp
+
+product_repository = ProductRepository()
 
 
 @bp.post('/products')
@@ -30,50 +32,53 @@ def add_product():
             supplier_id=product_schema.supplier_id,
             image_id=product_schema.image_id
         )
-        ProductORM.add_product(new_product)
-
-    return jsonify({'message': 'Success'}), 201
+        product_dto = ProductDTO(new_product)
+        product_repository.add_product(new_product)
+        return jsonify({'new product': product_dto.map_product_dto_to_json()}), 201
 
 
 @bp.delete('/products')
 def delete_product():    
     try:
         product_id = int(request.args.get('product_id', default=None))
+        
         if not product_id:
             return jsonify({'message': 'Request must contain query parameter: product_id'}), 400
-        ProductORM.delete_product(product_id)
+        
+        product_repository.delete_product(product_id)
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 204
+        return '', 204
 
 
 @bp.get('/all-available-products')
 def get_all_available_products():
     try:
-        all_available_products = ProductORM.get_all_available_products()
+        all_available_products = product_repository.get_all_available_products()
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        json_all_available_products = [ProductDTO(product).map_product_dto_to_json() for product in all_available_products]
-        return jsonify({'message': 'Success', 'all_available_products': json_all_available_products}), 200
+        return jsonify({'all available products': [ProductDTO(product).map_product_dto_to_json() for product in all_available_products]}), 200
 
 
 @bp.get('/products')
 def get_product_by_id():
     try:
         product_id = int(request.args.get('product_id', default=None))
+        
         if not product_id:
             return jsonify({'message': 'Request must contain query parameter: product_id'}), 400
-        product = ProductORM.get_product_by_id(product_id)
+        
+        product = product_repository.get_product_by_id(product_id)
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success', 'product': ProductDTO(product).map_product_dto_to_json()}), 200
+        return jsonify({'product': ProductDTO(product).map_product_dto_to_json()}), 200
 
 
 @bp.patch('/products')
@@ -81,12 +86,14 @@ def reduce_product():
     try:
         product_id = int(request.args.get('product_id', default=None))
         reduce_by = int(request.args.get('reduce_by', default=None))
+        
         if not product_id or not reduce_by:
             return jsonify({'message': 'Request must contain query parameters: product_id, reduce_by'}), 400
-        ProductORM.reduce_product(product_id, reduce_by)
+        
+        reduced_product = product_repository.reduce_product(product_id, reduce_by)
     except NotFound as e:
         return jsonify({'message': f'{e}'}), 404
     except Exception as e:
         return jsonify({'message': f'{e}'}), 400
     else:
-        return jsonify({'message': 'Success'}), 200 # and new product
+        return jsonify({'reduced product': ProductDTO(reduced_product)}), 200

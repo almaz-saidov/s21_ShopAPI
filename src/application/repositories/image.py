@@ -5,12 +5,13 @@ from sqlalchemy import update
 from werkzeug.exceptions import NotFound
 
 from application.database import get_db_session
+from application.dto.image import ImageDTO
 from application.models.image import Image
 from application.models.product import Product
 
 
-class ImageORM:
-    def add_image(self, byte_array: bytes, product_id: int):
+class ImageRepository:
+    def add_image(self, image_dto: ImageDTO, product_id: int):
         with get_db_session() as db_session:
             product_to_add_image = db_session.query(Product).filter(Product.id == product_id).one_or_none()
             
@@ -20,7 +21,7 @@ class ImageORM:
             if product_to_add_image.image_id:
                 raise Exception(f'Product with id {product_id} already has image')
             
-            new_image = Image(id=uuid.uuid4(), data=byte_array)
+            new_image = Image(id=uuid.uuid4(), data=image_dto.data)
             db_session.add(new_image)
             db_session.commit()
 

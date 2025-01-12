@@ -1,14 +1,21 @@
 from werkzeug.exceptions import NotFound
 
 from application.database import get_db_session
+from application.dto.address import AddressDTO
 from application.models.address import Address
 
 
 class AddressRepository:
-    def add_address(self, address: Address):
+    def add_address(self, address_dto: AddressDTO):
         with get_db_session() as db_session:
-            db_session.add(address)
+            new_address = Address(
+                country=address_dto.country,
+                city = address_dto.city,
+                street=address_dto.street
+            )
+            db_session.add(new_address)
             db_session.commit()
+            return AddressDTO(new_address)
 
     def get_address(self, address_id: int):
         with get_db_session() as db_session:
