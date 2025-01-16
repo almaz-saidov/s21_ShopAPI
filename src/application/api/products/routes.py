@@ -4,7 +4,7 @@ from flask import jsonify, request
 from werkzeug.exceptions import NotFound
 
 from application.dto.product import ProductDTO
-from application.models.product import Product
+from application.models import Product
 from application.schemas import ProductSchema
 from application.repositories.product import ProductRepository
 from . import bp

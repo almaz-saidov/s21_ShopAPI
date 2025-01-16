@@ -6,8 +6,7 @@ from werkzeug.exceptions import NotFound
 from application.database import get_db_session
 from application.dto.address import AddressDTO
 from application.dto.supplier import SupplierDTO
-from application.models.address import Address
-from application.models.supplier import Supplier
+from application.models import Address, Supplier
 
 
 class SupplierRepository:

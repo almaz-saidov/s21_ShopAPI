@@ -3,8 +3,7 @@ from werkzeug.exceptions import NotFound
 
 from application.dto.address import AddressDTO
 from application.dto.supplier import SupplierDTO
-from application.models.address import Address
-from application.models.supplier import Supplier
+from application.models import Address, Supplier
 from application.schemas import AddressSchema, SupplierSchema
 from application.repositories.supplier import SupplierRepository
 from . import bp

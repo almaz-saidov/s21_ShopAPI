@@ -1,6 +1,6 @@
 import json
 
-from application.models.product import Product
+from application.models import Product
 
 
 class ProductDTO:

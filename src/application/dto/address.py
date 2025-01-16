@@ -1,6 +1,6 @@
 import json
 
-from application.models.address import Address
+from application.models import Address
 
 
 class AddressDTO:

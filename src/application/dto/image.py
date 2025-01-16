@@ -1,6 +1,6 @@
 import json
 
-from application.models.image import Image
+from application.models import Image
 
 
 class ImageDTO:

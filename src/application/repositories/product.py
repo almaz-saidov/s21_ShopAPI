@@ -3,7 +3,7 @@ from werkzeug.exceptions import NotFound
 
 from application.database import get_db_session
 from application.dto.product import ProductDTO
-from application.models.product import Product
+from application.models import Product
 
 
 class ProductRepository:

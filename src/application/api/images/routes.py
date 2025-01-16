@@ -4,7 +4,7 @@ from flask import jsonify, request, Response
 from werkzeug.exceptions import NotFound
 
 from application.dto.image import ImageDTO
-from application.models.image import Image
+from application.models import Image
 from application.repositories.image import ImageRepository
 from application.schemas import ImageSchema
 from . import bp

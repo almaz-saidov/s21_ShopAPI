@@ -1,6 +1,6 @@
 import json
 
-from application.models.client import Client
+from application.models import Client
 from application.repositories.address import AddressRepository
 from .address import AddressDTO
 

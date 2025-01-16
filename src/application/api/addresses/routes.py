@@ -2,7 +2,7 @@ from flask import jsonify, request
 from werkzeug.exceptions import NotFound
 
 from application.dto.address import AddressDTO
-from application.models.address import Address
+from application.models import Address
 from application.repositories.address import AddressRepository
 from application.schemas import AddressSchema
 from . import bp

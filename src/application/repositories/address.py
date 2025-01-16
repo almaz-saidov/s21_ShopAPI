@@ -2,7 +2,7 @@ from werkzeug.exceptions import NotFound
 
 from application.database import get_db_session
 from application.dto.address import AddressDTO
-from application.models.address import Address
+from application.models import Address
 
 
 class AddressRepository:

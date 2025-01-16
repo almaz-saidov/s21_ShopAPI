@@ -6,8 +6,7 @@ from werkzeug.exceptions import NotFound
 
 from application.database import get_db_session
 from application.dto.image import ImageDTO
-from application.models.image import Image
-from application.models.product import Product
+from application.models import Image, Product
 
 
 class ImageRepository:
