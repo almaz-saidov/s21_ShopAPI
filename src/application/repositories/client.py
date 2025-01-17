@@ -1,3 +1,5 @@
+import json
+
 from sqlalchemy import update
 from werkzeug.exceptions import NotFound
 
@@ -10,15 +12,25 @@ from application.models import Address, Client
 class ClientRepository:
     def add_client(self, client_dto: ClientDTO):
         with get_db_session() as db_session:
-            db_session.add(Client(
+            new_client = Client(
                 client_name=client_dto.client_name,
                 client_surname=client_dto.client_surname,
                 birthday=client_dto.birthday,
                 gender=client_dto.gender,
                 registration_date=client_dto.registration_date,
-                address_id=client_dto.address_id
-            ))
+                address_id=json.loads(client_dto.address).get('id')
+            )
+            db_session.add(new_client)
             db_session.commit()
+            return ClientDTO(
+                new_client.id,
+                new_client.client_name,
+                new_client.client_surname,
+                new_client.birthday,
+                new_client.gender,
+                new_client.registration_date,
+                new_client.address_id
+            )
 
     def delete_client(self, client_id: int):
         with get_db_session() as db_session:
@@ -33,7 +45,18 @@ class ClientRepository:
     def get_all_clients(self, limit: int=0, offset: int=0):
         with get_db_session() as db_session:
             clients = db_session.query(Client).limit(limit).offset(offset).all()
-            return clients
+            return [
+                ClientDTO(
+                    client.id,
+                    client.client_name,
+                    client.client_surname,
+                    client.birthday,
+                    client.gender,
+                    client.registration_date,
+                    client.address_id
+                ).map_client_dto_to_json()
+                for client in clients
+            ]
 
     def get_client_by_name_and_surname(self, name: str, surname: str):
         with get_db_session() as db_session:
@@ -42,7 +65,15 @@ class ClientRepository:
             if not client:
                 raise NotFound(f'Client with name {name} and surname {surname} not found')
             
-            return client
+            return ClientDTO(
+                client.id,
+                client.client_name,
+                client.client_surname,
+                client.birthday,
+                client.gender,
+                client.registration_date,
+                client.address_id
+            )
 
     def change_client_address(self, client_id: int, new_address: AddressDTO):
         with get_db_session() as db_session:
@@ -57,4 +88,12 @@ class ClientRepository:
 
             client = db_session.query(Client).filter(Client.id == client_id).one_or_none()
             address = db_session.query(Address).filter(Address.id == client.address_id).one_or_none()
-            return client, address
+            return ClientDTO(
+                client.id,
+                client.client_name,
+                client.client_surname,
+                client.birthday,
+                client.gender,
+                client.registration_date,
+                client.address_id
+            )
