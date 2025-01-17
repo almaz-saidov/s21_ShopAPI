@@ -15,10 +15,12 @@ class AddressRepository:
             )
             db_session.add(new_address)
             db_session.commit()
-            return AddressDTO(new_address.id,
-                              new_address.country,
-                              new_address.city,
-                              new_address.street)
+            return AddressDTO(
+                new_address.id,
+                new_address.country,
+                new_address.city,
+                new_address.street
+            )
 
     def get_address(self, address_id: int):
         with get_db_session() as db_session:

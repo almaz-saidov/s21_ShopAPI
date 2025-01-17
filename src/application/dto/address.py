@@ -1,7 +1,5 @@
 import json
 
-from application.models import Address
-
 
 class AddressDTO:
     def __init__(self, id: int | None, country: str, city: str, street: str):
