@@ -12,12 +12,20 @@ from application.models import Address, Supplier
 class SupplierRepository:
     def add_supplier(self, supplier_dto: SupplierDTO):
         with get_db_session() as db_session:
-            db_session.add(Supplier(
+            new_supplier = Supplier(
                 name=supplier_dto.name,
-                address_id=supplier_dto.address.get('id'),
+                address_id=json.loads(supplier_dto.address).get('id'),
                 phone_number=supplier_dto.phone_number
-            ))
+            )
+            db_session.add(new_supplier)
             db_session.commit()
+
+            return SupplierDTO(
+                new_supplier.id,
+                new_supplier.name,
+                new_supplier.address_id,
+                new_supplier.phone_number
+            )
 
     def delete_supplier(self, supplier_id: int):
         with get_db_session() as db_session:
@@ -31,7 +39,16 @@ class SupplierRepository:
 
     def get_all_suppliers(self):
         with get_db_session() as db_session:
-            return db_session.query(Supplier).all()
+            suppliers = db_session.query(Supplier).all()
+            return [
+                SupplierDTO(
+                    supplier.id,
+                    supplier.name,
+                    supplier.address_id,
+                    supplier.phone_number
+                ).map_supplier_dto_to_json()
+                for supplier in suppliers
+            ]
 
     def get_supplier_by_id(self, supplier_id: int):
         with get_db_session() as db_session:
@@ -40,20 +57,28 @@ class SupplierRepository:
             if not supplier:
                 raise NotFound(f'Supplier with id {supplier_id} not found')
             
-            return supplier
+            return SupplierDTO(
+                supplier.id,
+                supplier.name,
+                supplier.address_id,
+                supplier.phone_number
+            )
 
-    def change_supplier_address(self, supplier_id: int, address_dto: AddressDTO):
+    def change_supplier_address(self, supplier_id: int, new_address_dto: AddressDTO):
         with get_db_session() as db_session:
             supplier_to_change_address = db_session.query(Supplier).filter(Supplier.id == supplier_id).one_or_none()
             
             if not supplier_to_change_address:
                 raise NotFound(f'Client with id {supplier_id} not found')
             
-            new_address = Address(
-                country=address_dto.country,
-                city=address_dto.city,
-                street=address_dto.street
-            )
-            query = update(Address).where(Address.id == supplier_to_change_address.address_id).values(country=new_address.country, city=new_address.city, street=new_address.street)
+            query = update(Address).where(Address.id == supplier_to_change_address.address_id).values(country=new_address_dto.country, city=new_address_dto.city, street=new_address_dto.street)
             db_session.execute(query)
             db_session.commit()
+
+            supplier = db_session.query(Supplier).filter(Supplier.id == supplier_id).one_or_none()
+            return SupplierDTO(
+                supplier.id,
+                supplier.name,
+                supplier.address_id,
+                supplier.phone_number
+            )
