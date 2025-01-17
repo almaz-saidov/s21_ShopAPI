@@ -75,19 +75,18 @@ class ClientRepository:
                 client.address_id
             )
 
-    def change_client_address(self, client_id: int, new_address: AddressDTO):
+    def change_client_address(self, client_id: int, new_address_dto: AddressDTO):
         with get_db_session() as db_session:
             client_to_change_address = db_session.query(Client).filter(Client.id == client_id).one_or_none()
             
             if not client_to_change_address:
                 raise NotFound(f'Client with id {client_id} not found')
             
-            query = update(Address).where(Address.id == client_to_change_address.address_id).values(country=new_address.country, city=new_address.city, street=new_address.street)
+            query = update(Address).where(Address.id == client_to_change_address.address_id).values(country=new_address_dto.country, city=new_address_dto.city, street=new_address_dto.street)
             db_session.execute(query)
             db_session.commit()
 
             client = db_session.query(Client).filter(Client.id == client_id).one_or_none()
-            address = db_session.query(Address).filter(Address.id == client.address_id).one_or_none()
             return ClientDTO(
                 client.id,
                 client.client_name,
