@@ -15,7 +15,10 @@ class AddressRepository:
             )
             db_session.add(new_address)
             db_session.commit()
-            return AddressDTO(new_address)
+            return AddressDTO(new_address.id,
+                              new_address.country,
+                              new_address.city,
+                              new_address.street)
 
     def get_address(self, address_id: int):
         with get_db_session() as db_session:
@@ -24,7 +27,10 @@ class AddressRepository:
             if not address:
                 raise NotFound(f'Address with id {address_id} not found')                
             
-            return address
+            return AddressDTO(address.id,
+                              address.country,
+                              address.city,
+                              address.street)
 
     def delete_address(self, address_id: int):
         with get_db_session() as db_session:

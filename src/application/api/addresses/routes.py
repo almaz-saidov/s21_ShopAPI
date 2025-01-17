@@ -2,7 +2,6 @@ from flask import jsonify, request
 from werkzeug.exceptions import NotFound
 
 from application.dto.address import AddressDTO
-from application.models import Address
 from application.repositories.address import AddressRepository
 from application.schemas import AddressSchema
 from . import bp
@@ -21,14 +20,14 @@ def add_address():
     except Exception as e:
         return jsonify({'error': f'{e}'}), 400
     else:
-        new_address = Address(
+        new_address_dto = AddressDTO(
+            id=None,
             country=address_schema.country,
             city=address_schema.city,
             street=address_schema.street
         )
-        address_dto = AddressDTO(new_address)
-        new_address_dto = address_repository.add_address(address_dto)
-        return jsonify({'new address': new_address_dto.map_address_dto_to_json()}), 201
+        added_address_dto = address_repository.add_address(new_address_dto)
+        return jsonify({'new address': added_address_dto.map_address_dto_to_json()}), 201
 
 
 @bp.get('/addresses')
@@ -39,13 +38,13 @@ def get_address():
         if not address_id:
             return jsonify({'error': 'Request must contain query parameter: address_id'}), 400
         
-        address = address_repository.get_address(address_id)
+        address_dto = address_repository.get_address(address_id)
     except NotFound as e:
         return jsonify({'error': f'{e}'}), 404
     except Exception as e:
         return jsonify({'error': f'{e}'}), 400
     else:
-        return jsonify({'address': AddressDTO(address).map_address_dto_to_json()}), 200
+        return jsonify({'address': address_dto.map_address_dto_to_json()}), 200
 
 
 @bp.delete('/addresses')
