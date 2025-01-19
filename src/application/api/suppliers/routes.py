@@ -13,13 +13,13 @@ supplier_repository = SupplierRepository()
 @bp.post('/suppliers')
 def add_supplier():
     if not request.is_json:
-        return jsonify({'message': 'Request body must be JSON'}), 400
+        return jsonify({'error': 'Request body must be JSON'}), 400
 
     try:
         request_data = request.json
         supplier_schema = SupplierSchema(**request_data)
     except Exception as e:
-        return jsonify({'message': f'{e}'}), 400
+        return jsonify({'error': f'{e}'}), 400
     else:
         new_supplier_dto = SupplierDTO(
             id=None,
@@ -37,11 +37,11 @@ def delete_supplier():
         supplier_id = int(request.args.get('supplier_id', default=None))
         
         if not supplier_id:
-            return jsonify({'message': 'Request must contain query parameter: supplier_id'}), 400
+            return jsonify({'error': 'Request must contain query parameter: supplier_id'}), 400
     except NotFound as e:
-        return jsonify({'message': f'{e}'}), 404
+        return jsonify({'error': f'{e}'}), 404
     except Exception as e:
-        return jsonify({'message': f'{e}'}), 400
+        return jsonify({'error': f'{e}'}), 400
     else:
         supplier_repository.delete_supplier(supplier_id)
         return '', 204
@@ -52,7 +52,7 @@ def get_all_suppliers():
     try:
         suppliers_dto = supplier_repository.get_all_suppliers()
     except Exception as e:
-        return jsonify({'message': f'{e}'}), 400
+        return jsonify({'error': f'{e}'}), 400
     else:
         return jsonify({'all suppliers': suppliers_dto}), 200
 
@@ -77,14 +77,14 @@ def get_supplier_by_id():
 @bp.patch('/suppliers')
 def change_supplier_address():
     if not request.is_json:
-        return jsonify({'message': 'Request body must be JSON'}), 400
+        return jsonify({'error': 'Request body must be JSON'}), 400
 
     try:
         request_data = request.json
         supplier_id = int(request.args.get('supplier_id', default=None))
         
         if not supplier_id:
-            return jsonify({'message': 'Request must contain query parameter: supplier_id'}), 400
+            return jsonify({'error': 'Request must contain query parameter: supplier_id'}), 400
         
         new_address_schema = AddressSchema(**request_data)
         new_address_dto = AddressDTO(
@@ -96,8 +96,8 @@ def change_supplier_address():
         
         supplier_dto = supplier_repository.change_supplier_address(supplier_id, new_address_dto)
     except NotFound as e:
-        return jsonify({'message': f'{e}'}), 404
+        return jsonify({'error': f'{e}'}), 404
     except Exception as e:
-        return jsonify({'message': f'{e}'}), 400
+        return jsonify({'error': f'{e}'}), 400
     else:
         return jsonify({'supplier': supplier_dto.map_supplier_dto_to_json()}), 200
