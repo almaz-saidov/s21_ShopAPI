@@ -22,10 +22,10 @@ class ImageRepository:
             
             new_image = Image(id=uuid.uuid4(), data=image_dto.data)
             db_session.add(new_image)
-            db_session.commit()
-
+            
             query = update(Product).where(Product.id == product_to_add_image.id).values(image_id=new_image.id, last_update_date=date.today())
             db_session.execute(query)
+            
             db_session.commit()
 
     def delete_image(self, image_id: uuid.UUID):
@@ -60,13 +60,14 @@ class ImageRepository:
             image = db_session.query(Image).filter(Image.id == product.image_id).one_or_none()
             return image.data
 
-    def change_image(self, image_id: uuid.UUID, data: bytes):
+    def change_image(self, image_dto: ImageDTO):
         with get_db_session() as db_session:
             image_to_change = db_session.query(Image).filter(Image.id == image_id).one_or_none()
             
             if not image_to_change:
-                raise NotFound(f'Image with id {image_id} not found')
+                raise NotFound(f'Image with id {image_dto.id} not found')
             
-            query = update(Image).where(Image.id == image_id).values(data=data)
+            query = update(Image).where(Image.id == image_dto.id).values(data=image_dto.data)
             db_session.execute(query)
+            
             db_session.commit()

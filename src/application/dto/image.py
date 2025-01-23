@@ -1,12 +1,11 @@
 import json
-
-from application.models import Image
+from uuid import UUID
 
 
 class ImageDTO:
-    def __init__(self, image: Image):
-        self.id = image.id
-        self.data = image.data
+    def __init__(self, id: UUID | None, data: bytes):
+        self.id = id
+        self.data = data
 
     def map_image_dto_to_json(self):
         return json.dumps(self.id)

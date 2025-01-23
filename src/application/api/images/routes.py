@@ -4,7 +4,6 @@ from flask import jsonify, request, Response
 from werkzeug.exceptions import NotFound
 
 from application.dto.image import ImageDTO
-from application.models import Image
 from application.repositories.image import ImageRepository
 from application.schemas import ImageSchema
 from . import bp
@@ -22,7 +21,7 @@ def add_image():
         request_data = request.data
         
         image_schema = ImageSchema(data=request_data)
-        image_dto = ImageDTO(Image(image_schema.data))
+        image_dto = ImageDTO(data=image_schema.data)
         
         image_repository.add_image(image_dto, product_id)
     except NotFound as e:
@@ -106,8 +105,8 @@ def change_image():
         
         request_data = request.data
         image_schema = ImageSchema(data=request_data)
-        # image_dto = ImageDTO(Image(id=image_id, data=image_schema.data))
-        image_repository.change_image(image_id, image_schema.data)
+        image_dto = ImageDTO(id=image_id, data=image_schema.data)
+        image_repository.change_image(image_dto)
     except NotFound as e:
         return jsonify({'error': f'{e}'}), 404
     except Exception as e:
