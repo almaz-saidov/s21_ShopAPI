@@ -8,4 +8,4 @@ class ImageDTO:
         self.data = data
 
     def map_image_dto_to_json(self):
-        return json.dumps(self.id)
+        return json.dumps(f'{self.id}')

@@ -22,11 +22,16 @@ class ImageRepository:
             
             new_image = Image(id=uuid.uuid4(), data=image_dto.data)
             db_session.add(new_image)
+            db_session.flush()
             
-            query = update(Product).where(Product.id == product_to_add_image.id).values(image_id=new_image.id, last_update_date=date.today())
+            query = update(Product).values(image_id=new_image.id, last_update_date=date.today()).where(Product.id == product_to_add_image.id)
             db_session.execute(query)
             
             db_session.commit()
+            return ImageDTO(
+                id=new_image.id,
+                data=new_image.data
+            )
 
     def delete_image(self, image_id: uuid.UUID):
         with get_db_session() as db_session:
@@ -35,6 +40,14 @@ class ImageRepository:
             if not image_to_delete:
                 raise NotFound(f'Image with id {image_id} not found')    
             
+            product_with_image_to_delete = db_session.query(Product).filter(Product.image_id == image_id).one_or_none()
+
+            if not product_with_image_to_delete:
+                raise NotFound(f'Product with image with id {image_id} not found') 
+
+            query = update(Product).where(Product.image_id == image_id).values(image_id=None)
+            db_session.execute(query)
+
             db_session.delete(image_to_delete)
             db_session.commit()
 
@@ -45,7 +58,10 @@ class ImageRepository:
             if not image:
                 raise NotFound(f'Image with id {image_id} not found')
             
-            return image.data
+            return ImageDTO(
+                id=image.id,
+                data=image.data
+            )
 
     def get_image_by_product_id(self, product_id: int):
         with get_db_session() as db_session:
@@ -58,11 +74,14 @@ class ImageRepository:
                 raise Exception(f'Product with id {product_id} has no image')
             
             image = db_session.query(Image).filter(Image.id == product.image_id).one_or_none()
-            return image.data
+            return ImageDTO(
+                id=image.id,
+                data=image.data
+            )
 
     def change_image(self, image_dto: ImageDTO):
         with get_db_session() as db_session:
-            image_to_change = db_session.query(Image).filter(Image.id == image_id).one_or_none()
+            image_to_change = db_session.query(Image).filter(Image.id == image_dto.id).one_or_none()
             
             if not image_to_change:
                 raise NotFound(f'Image with id {image_dto.id} not found')
