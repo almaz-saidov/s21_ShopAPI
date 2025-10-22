@@ -40,7 +40,8 @@ class ClientService(BaseService[ClientRepository]):
         return client
 
     async def add_client(self, client: SClientPost) -> Client:
-        return await self.repository.add_one(data=client.model_dump())
+        added_client = await self.repository.add_one(data=client.model_dump())
+        return await self.repository.find_client(id=added_client.id)
 
     async def update_client_address(
         self,

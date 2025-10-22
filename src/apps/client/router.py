@@ -42,7 +42,7 @@ async def get_client(
     )
 
 
-@router.post("", response_model=SClientPost)
+@router.post("", response_model=SClient)
 async def add_client(client: SClientPost):
     return await get_client_service().add_client(client=client)
 
