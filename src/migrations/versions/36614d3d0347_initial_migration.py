@@ -1,8 +1,8 @@
-"""create_models
+"""initial_migration
 
-Revision ID: be3a8389df75
+Revision ID: 36614d3d0347
 Revises: 
-Create Date: 2025-10-14 09:40:44.894157
+Create Date: 2025-10-22 15:21:28.639192
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'be3a8389df75'
+revision: str = '36614d3d0347'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -35,6 +35,7 @@ def upgrade() -> None:
     )
     op.create_table('product_images',
     sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('filename', sa.String(length=255), nullable=False),
     sa.Column('image', sa.LargeBinary(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
@@ -42,10 +43,10 @@ def upgrade() -> None:
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('client_name', sa.String(length=255), nullable=False),
     sa.Column('client_surname', sa.String(length=255), nullable=False),
-    sa.Column('birthday', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('birthday', sa.Date(), nullable=True),
     sa.Column('gender', sa.Enum('MALE', 'FEMALE', name='gender'), nullable=False),
     sa.Column('registration_date', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('address_id', sa.UUID(), nullable=False),
+    sa.Column('address_id', sa.UUID(), nullable=True),
     sa.ForeignKeyConstraint(['address_id'], ['addresses.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -53,7 +54,7 @@ def upgrade() -> None:
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('name', sa.String(length=255), nullable=False),
     sa.Column('phone_number', sa.String(length=255), nullable=False),
-    sa.Column('address_id', sa.UUID(), nullable=False),
+    sa.Column('address_id', sa.UUID(), nullable=True),
     sa.ForeignKeyConstraint(['address_id'], ['addresses.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -63,9 +64,9 @@ def upgrade() -> None:
     sa.Column('price', sa.Integer(), nullable=False),
     sa.Column('available_stock', sa.Integer(), nullable=False),
     sa.Column('last_update_date', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('category_id', sa.UUID(), nullable=False),
+    sa.Column('category_id', sa.UUID(), nullable=True),
     sa.Column('supplier_id', sa.UUID(), nullable=False),
-    sa.Column('image_id', sa.UUID(), nullable=False),
+    sa.Column('image_id', sa.UUID(), nullable=True),
     sa.ForeignKeyConstraint(['category_id'], ['categories.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['image_id'], ['product_images.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['supplier_id'], ['suppliers.id'], ondelete='CASCADE'),
@@ -84,5 +85,3 @@ def downgrade() -> None:
     op.drop_table('categories')
     op.drop_table('addresses')
     # ### end Alembic commands ###
-    op.execute("DROP TYPE gender")
-
