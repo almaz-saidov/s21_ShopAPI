@@ -22,7 +22,7 @@ async def get_supplier(id: uuid.UUID):
     return await get_supplier_service().get_supplier(id=id)
 
 
-@router.post("", response_model=SSupplierPost)
+@router.post("", response_model=SSupplier)
 async def add_supplier(supplier: SSupplierPost):
     return await get_supplier_service().add_supplier(supplier=supplier)
 
