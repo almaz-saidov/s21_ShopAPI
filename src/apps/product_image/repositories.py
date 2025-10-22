@@ -31,4 +31,11 @@ class ProductImageRepository(SQLAlchemyORMRepository[ProductImage]):
                 detail="Товар не найден.",
             )
 
-        return await self.add_one(data=data)
+        added_image = await self.add_one(data=data)
+
+        await ProductRepository().update_one(
+            data={"image_id": added_image.id},
+            id=id,
+        )
+
+        return added_image

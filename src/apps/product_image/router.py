@@ -42,12 +42,15 @@ async def add_image(
     )
 
 
-@router.put("/{id}")
+@router.put("/{id}", response_model=SProductImageResponse)
 async def update_image(
     id: uuid.UUID,
     image: UploadFile = File(..., description="Изображение товара"),
 ):
-    pass
+    return await get_product_image_service().update_image(
+        id=id,
+        image=image,
+    )
 
 
 @router.delete("/{id}")

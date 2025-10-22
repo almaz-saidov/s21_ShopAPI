@@ -44,6 +44,26 @@ class ProductImageService(BaseService[ProductImageRepository]):
             filename=added_image.filename,
         )
 
+    async def update_image(
+        self,
+        id: uuid.UUID,
+        image: UploadFile,
+    ) -> ProductImage:
+        image_data = await image.read()
+
+        updated_image = await self.repository.update_one(
+            data={
+                "filename": image.filename,
+                "image": image_data,
+            },
+            id=id,
+        )
+
+        return SProductImageResponse(
+            id=updated_image.id,
+            filename=updated_image.filename,
+        )
+
     async def delete_image(self, id: uuid.UUID) -> None:
         await self.repository.force_delete_one(id=id)
 
