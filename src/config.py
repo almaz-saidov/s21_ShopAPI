@@ -1,6 +1,10 @@
-from pydantic_settings import BaseSettings
+import os
+from pathlib import Path
 
-DB_PREFIX = 'postgresql+psycopg2://'
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+BASE_DIR = Path(__file__).resolve().parent
+ENV_PATH = os.path.join(BASE_DIR, "envs", ".env")
 
 
 class Settings(BaseSettings):
@@ -11,11 +15,10 @@ class Settings(BaseSettings):
     DB_NAME: str
 
     @property
-    def DB_URL(self) -> str:
-        return f'{DB_PREFIX}{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
+    def DATABASE_URL(self):
+        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
     
-    class Config:
-        env_file = '.env'
+    model_config = SettingsConfigDict(env_file=ENV_PATH)
 
 
 settings = Settings()
