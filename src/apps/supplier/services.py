@@ -28,7 +28,8 @@ class SupplierService(BaseService[SupplierRepository]):
         return supplier
 
     async def add_supplier(self, supplier: SSupplierPost) -> Supplier:
-        return await self.repository.add_one(data=supplier.model_dump())
+        added_supplier = await self.repository.add_one(data=supplier.model_dump())
+        return await self.repository.find_one(id=added_supplier.id)
 
     async def update_supplier_address(
         self,
